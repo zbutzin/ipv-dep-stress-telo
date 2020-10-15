@@ -51,7 +51,6 @@ telo_dev <- inner_join(d, development, "childid")
 # Z-score of telomere measurements
 telo_dev <- telo_dev %>% 
   mutate(TS_t2_Z = scale(TS_t2, center=TRUE, scale=TRUE)[,1]) %>%
-  mutate(TS_t3_Z = scale(TS_t3, center=TRUE, scale=TRUE)[,1]) %>%
-  mutate(delta_TS_Z = scale(delta_TS, center=TRUE, scale=TRUE)[,1])
+  mutate(TS_t3_Z = scale(TS_t3, center=TRUE, scale=TRUE)[,1])
 
 saveRDS(telo_dev, paste0(dropboxDir,"Data/Cleaned/Audrie/bangladesh-ee-telo-development-covariates.RDS"))

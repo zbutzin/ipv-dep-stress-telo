@@ -38,7 +38,7 @@ Wvars3[!(Wvars3 %in% colnames(d))]
 
 #### Hypothesis 1 ####
 # change in telomere length between y1 and y2 and development year 2
-Xvars <- c("delta_TS_Z")            
+Xvars <- c("delta_TS")            
 Yvars <- c("endline_communication_score", "endline_gross_motor_score", 
            "endline_personal_social_score", "combined_easq", "endline_A_not_B_score", 
            "endline_tower_test") 
