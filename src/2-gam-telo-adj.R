@@ -39,9 +39,9 @@ Wvars3[!(Wvars3 %in% colnames(d))]
 #### Hypothesis 1 ####
 # change in telomere length between y1 and y2 and development year 2
 Xvars <- c("delta_TS")            
-Yvars <- c("endline_communication_score", "endline_gross_motor_score", 
-           "endline_personal_social_score", "combined_easq", "endline_A_not_B_score", 
-           "endline_tower_test") 
+Yvars <- c("endline_communication_score_Z", "endline_gross_motor_score_Z", 
+           "endline_personal_social_score_Z", "combined_easq_Z", "endline_A_not_B_score_Z", 
+           "endline_tower_test_Z") 
 
 pick_covariates_H1 <- function(j){
   if(grepl("_t2", j)){Wset = W2_F2.W2_anthro}
@@ -101,9 +101,9 @@ saveRDS(H1_adj_res, here("results/adjusted/H1_adj_res.RDS"))
 #### Hypothesis 2 ####
 # Telomere at y1 v. development year 2
 Xvars <- c("TS_t2_Z")            
-Yvars <- c("endline_communication_score", "endline_gross_motor_score", 
-           "endline_personal_social_score", "combined_easq", "endline_A_not_B_score", 
-           "endline_tower_test") 
+Yvars <- c("endline_communication_score_Z", "endline_gross_motor_score_Z", 
+           "endline_personal_social_score_Z", "combined_easq_Z", "endline_A_not_B_score_Z", 
+           "endline_tower_test_Z") 
 
 #Fit models
 H2_adj_models <- NULL
@@ -207,9 +207,9 @@ saveRDS(H3_adj_res, here("results/adjusted/H3_adj_res.RDS"))
 #### Hypothesis 4 ####
 #Telomere length at year 2 v. development at year 2
 Xvars <- c("TS_t3_Z")            
-Yvars <- c("endline_communication_score", "endline_gross_motor_score", 
-           "endline_personal_social_score", "combined_easq", "endline_A_not_B_score", 
-           "endline_tower_test") 
+Yvars <- c("endline_communication_score_Z", "endline_gross_motor_score_Z", 
+           "endline_personal_social_score_Z", "combined_easq_Z", "endline_A_not_B_score_Z", 
+           "endline_tower_test_Z") 
 
 #Fit models
 H4_adj_models <- NULL

@@ -51,6 +51,16 @@ telo_dev <- inner_join(d, development, "childid")
 # Z-score of telomere measurements
 telo_dev <- telo_dev %>% 
   mutate(TS_t2_Z = scale(TS_t2, center=TRUE, scale=TRUE)[,1]) %>%
-  mutate(TS_t3_Z = scale(TS_t3, center=TRUE, scale=TRUE)[,1])
+  mutate(TS_t3_Z = scale(TS_t3, center=TRUE, scale=TRUE)[,1]) %>%
+  mutate(endline_CDI_understand_Z = scale(endline_CDI_understand, center=T, scale=T)[,1]) %>%
+  mutate(endline_CDI_say_Z = scale(endline_CDI_say, center=T, scale=T)[,1]) %>%
+  mutate(endline_communication_score_Z = scale(endline_communication_score, center=T, scale=T)[,1]) %>%
+  mutate(endline_gross_motor_score_Z = scale(endline_gross_motor_score, center=T, scale=T)[,1]) %>%
+  mutate(endline_personal_social_score_Z = scale(endline_personal_social_score, center=T, scale=T)[,1]) %>%
+  mutate(combined_easq_Z = scale(combined_easq, center=T, scale=T)[,1]) %>%
+  mutate(endline_A_not_B_score_Z = scale(endline_A_not_B_score, center=T, scale=T)[,1]) %>%
+  mutate(endline_tower_test_Z = scale(endline_tower_test, center=T, scale=T)[,1]) %>%
+  mutate(endline_CDI_say_Z = scale(endline_CDI_say, center=T, scale=T)[,1])
+
 
 saveRDS(telo_dev, paste0(dropboxDir,"Data/Cleaned/Audrie/bangladesh-ee-telo-development-covariates.RDS"))
