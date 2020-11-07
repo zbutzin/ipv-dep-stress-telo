@@ -3,8 +3,8 @@ rm(list=ls())
 source(here::here("0-config.R"))
 source(here::here("src/0-gam-functions.R"))
 
-d <- readRDS(paste0(dropboxDir, "Data/Cleaned/Audrie/bangladesh-ee-telo-development-covariates.RDS"))
-
+d <- readRDS(paste0(dropboxDir,"Data/Cleaned/Audrie/ipv-dep-stress-telo-covariates.RDS"))
+names(d)
 #Example:
 
 #Fit GAM model with random effects for childid
@@ -29,48 +29,46 @@ d <- readRDS(paste0(dropboxDir, "Data/Cleaned/Audrie/bangladesh-ee-telo-developm
 
 #Loop over exposure-outcome pairs
 
-#### Hypothesis 1 ####
-# change in telomere length between y1 and y2 and development year 2
-Xvars <- c("delta_TS")            
-Yvars <- c("endline_communication_score_Z", "endline_gross_motor_score_Z", 
-           "endline_personal_social_score_Z", "combined_easq_Z", "endline_A_not_B_score_Z", 
-           "endline_tower_test_Z") 
+#### Hypothesis 1a ####
+# Maternal exposure to cumulative lifetime IPV measured at Year 2 is negatively associated with child telomere length measured at Year 2
+Xvars <- c("TS_t3_Z")            
+Yvars <- c("life_viol_any_t3") 
 
 #Fit models
-H1_models <- NULL
+H1a_models <- NULL
 for(i in Xvars){
   for(j in Yvars){
     res_unadj <- fit_RE_gam(d=d, X=i, Y=j,  W=NULL)
     res <- data.frame(X=i, Y=j, fit=I(list(res_unadj$fit)), dat=I(list(res_unadj$dat)))
-    H1_models <- bind_rows(H1_models, res)
+    H1a_models <- bind_rows(H1a_models, res)
   }
 }
 
 #Get primary contrasts
-H1_res <- NULL
-for(i in 1:nrow(H1_models)){
-  res <- data.frame(X=H1_models$X[i], Y=H1_models$Y[i])
-  preds <- predict_gam_diff(fit=H1_models$fit[i][[1]], d=H1_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
-  H1_res <-  bind_rows(H1_res , preds$res)
+H1a_res <- NULL
+for(i in 1:nrow(H1a_models)){
+  res <- data.frame(X=H1a_models$X[i], Y=H1a_models$Y[i])
+  preds <- predict_gam_diff(fit=H1a_models$fit[i][[1]], d=H1a_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
+  H1a_res <-  bind_rows(H1a_res , preds$res)
 }
-H1_res$adjusted <- 0
+H1a_res$adjusted <- 0
 
 #Make list of plots
-H1_plot_list <- NULL
-H1_plot_data <- NULL
-for(i in 1:nrow(H1_models)){
-  res <- data.frame(X=H1_models$X[i], Y=H1_models$Y[i])
-  simul_plot <- gam_simul_CI(H1_models$fit[i][[1]], H1_models$dat[i][[1]], xlab=res$X, ylab=res$Y, title="")
-  H1_plot_list[[i]] <-  simul_plot$p
-  H1_plot_data <-  rbind(H1_plot_data, data.frame(Xvar=res$X, Yvar=res$Y, adj=0, simul_plot$pred))
+H1a_plot_list <- NULL
+H1a_plot_data <- NULL
+for(i in 1:nrow(H1a_models)){
+  res <- data.frame(X=Ha1_models$X[i], Y=H1a_models$Y[i])
+  simul_plot <- gam_simul_CI(H1a_models$fit[i][[1]], H1a_models$dat[i][[1]], xlab=res$X, ylab=res$Y, title="")
+  H1a_plot_list[[i]] <-  simul_plot$p
+  H1a_plot_data <-  rbind(Ha1_plot_data, data.frame(Xvar=res$X, Yvar=res$Y, adj=0, simul_plot$pred))
 }
 
 
 #Save models
-saveRDS(H1_models, here("models/H1_models.RDS"))
+saveRDS(H1a_models, here("models/H1a_models.RDS"))
 
 #Save results
-saveRDS(H1_res, here("results/unadjusted/H1_res.RDS"))
+saveRDS(H1a_res, here("results/unadjusted/H1a_res.RDS"))
 
 
 #Save plots
@@ -80,48 +78,46 @@ saveRDS(H1_res, here("results/unadjusted/H1_res.RDS"))
 #saveRDS(H1_plot_data, here("figure-data/H1_unadj_spline_data.RDS"))
 
 
-#### Hypothesis 2 ####
-# Telomere at y1 v. development year 2
-Xvars <- c("TS_t2_Z")            
-Yvars <- c("endline_communication_score_Z", "endline_gross_motor_score_Z", 
-           "endline_personal_social_score_Z", "combined_easq_Z", "endline_A_not_B_score_Z", 
-           "endline_tower_test_Z") 
+#### Hypothesis 1b ####
+# Maternal exposure to IPV from Year 1 to Year 2 is positively associated with child telomere shortening from Year 1 to Year 2
+Xvars <- c("viol_12m_any_t3")            
+Yvars <- c("delta_TS_Z") 
 
 #Fit models
-H2_models <- NULL
+H1b_models <- NULL
 for(i in Xvars){
   for(j in Yvars){
     res_unadj <- fit_RE_gam(d=d, X=i, Y=j,  W=NULL)
     res <- data.frame(X=i, Y=j, fit=I(list(res_unadj$fit)), dat=I(list(res_unadj$dat)))
-    H2_models <- bind_rows(H2_models, res)
+    H1b_models <- bind_rows(H1b_models, res)
   }
 }
 
 #Get primary contrasts
-H2_res <- NULL
-for(i in 1:nrow(H2_models)){
-  res <- data.frame(X=H2_models$X[i], Y=H2_models$Y[i])
-  preds <- predict_gam_diff(fit=H2_models$fit[i][[1]], d=H2_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
-  H2_res <-  bind_rows(H2_res , preds$res)
+H1b_res <- NULL
+for(i in 1:nrow(H1b_models)){
+  res <- data.frame(X=H1b_models$X[i], Y=H1b_models$Y[i])
+  preds <- predict_gam_diff(fit=H1b_models$fit[i][[1]], d=H1b_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
+  H1b_res <-  bind_rows(H1b_res , preds$res)
 }
-H2_res$adjusted <- 0
+H1b_res$adjusted <- 0
 
 #Make list of plots
-H2_plot_list <- NULL
-H2_plot_data <- NULL
-for(i in 1:nrow(H2_models)){
-  res <- data.frame(X=H2_models$X[i], Y=H2_models$Y[i])
-  simul_plot <- gam_simul_CI(H2_models$fit[i][[1]], H2_models$dat[i][[1]], xlab=res$X, ylab=res$Y, title="")
-  H2_plot_list[[i]] <-  simul_plot$p
-  H2_plot_data <-  rbind(H2_plot_data, data.frame(Xvar=res$X, Yvar=res$Y, adj=0, simul_plot$pred))
+H1b_plot_list <- NULL
+H1b_plot_data <- NULL
+for(i in 1:nrow(H1b_models)){
+  res <- data.frame(X=H1b_models$X[i], Y=H1b_models$Y[i])
+  simul_plot <- gam_simul_CI(H1b_models$fit[i][[1]], H1b_models$dat[i][[1]], xlab=res$X, ylab=res$Y, title="")
+  H1b_plot_list[[i]] <-  simul_plot$p
+  H1b_plot_data <-  rbind(H1b_plot_data, data.frame(Xvar=res$X, Yvar=res$Y, adj=0, simul_plot$pred))
 }
 
 
 #Save models
-saveRDS(H2_models, here("models/H2_models.RDS"))
+saveRDS(H1b_models, here("models/H1b_models.RDS"))
 
 #Save results
-saveRDS(H2_res, here("results/unadjusted/H2_res.RDS"))
+saveRDS(H1b_res, here("results/unadjusted/H1b_res.RDS"))
 
 
 #Save plots
@@ -131,10 +127,204 @@ saveRDS(H2_res, here("results/unadjusted/H2_res.RDS"))
 #saveRDS(H2_plot_data, here("figure-data/H2_unadj_spline_data.RDS"))
 
 
+#### Hypothesis 1c ####
+# Maternal exposure to IPV from Year 1 to Year 2 is negatively associated with child telomere length at Year 2
+Xvars <- c("viol_12m_any_t3")            
+Yvars <- c("TS_t3_Z")
+
+#Fit models
+H1c_models <- NULL
+for(i in Xvars){
+  for(j in Yvars){
+    res_unadj <- fit_RE_gam(d=d, X=i, Y=j,  W=NULL)
+    res <- data.frame(X=i, Y=j, fit=I(list(res_unadj$fit)), dat=I(list(res_unadj$dat)))
+    H1c_models <- bind_rows(H1c_models, res)
+  }
+}
+
+#Get primary contrasts
+H1c_res <- NULL
+for(i in 1:nrow(H1c_models)){
+  res <- data.frame(X=H1c_models$X[i], Y=H1c_models$Y[i])
+  preds <- predict_gam_diff(fit=H1c_models$fit[i][[1]], d=H1c_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
+  H1c_res <-  bind_rows(H1c_res , preds$res)
+}
+H1c_res$adjusted <- 0
+
+#Make list of plots
+H1c_plot_list <- NULL
+H1c_plot_data <- NULL
+for(i in 1:nrow(H1c_models)){
+  res <- data.frame(X=H1c_models$X[i], Y=H1c_models$Y[i])
+  simul_plot <- gam_simul_CI(H1c_models$fit[i][[1]], H1c_models$dat[i][[1]], xlab=res$X, ylab=res$Y, title="")
+  H1c_plot_list[[i]] <-  simul_plot$p
+  H1c_plot_data <-  rbind(H1c_plot_data, data.frame(Xvar=res$X, Yvar=res$Y, adj=0, simul_plot$pred))
+}
+
+
+#Save models
+saveRDS(H1c_models, here("models/H1c_models.RDS"))
+
+#Save results
+saveRDS(H1c_res, here("results/unadjusted/H1c_res.RDS"))
+
+
+#Save plots
+#saveRDS(H3_plot_list, here("figure-objects/H3_unadj_splines.RDS"))
+
+#Save plot data
+#saveRDS(H3_plot_data, here("figure-data/H3_unadj_spline_data.RDS"))
+
+
+
+#### Hypothesis 2a ####
+#Maternal depression measured at Years 1 and 2 is negatively associated with concurrent child telomere length at Years 1 and 2
+Xvars <- c("cesd_sum_ee_t2", "cesd_sum_ee_t3")            
+Yvars <- c("TS_t2_Z", "TS_t3_Z") 
+
+#Fit models
+H2a_models <- NULL
+for(i in Xvars){
+  for(j in Yvars){
+    res_unadj <- fit_RE_gam(d=d, X=i, Y=j,  W=NULL)
+    res <- data.frame(X=i, Y=j, fit=I(list(res_unadj$fit)), dat=I(list(res_unadj$dat)))
+    H2a_models <- bind_rows(H2a_models, res)
+  }
+}
+
+#Get primary contrasts
+H2a_res <- NULL
+for(i in 1:nrow(H2a_models)){
+  res <- data.frame(X=H2a_models$X[i], Y=H2a_models$Y[i])
+  preds <- predict_gam_diff(fit=H2a_models$fit[i][[1]], d=H2a_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
+  H2a_res <-  bind_rows(H2a_res , preds$res)
+}
+H2a_res$adjusted <- 0
+
+#Make list of plots
+H2a_plot_list <- NULL
+H2a_plot_data <- NULL
+for(i in 1:nrow(H2a_models)){
+  res <- data.frame(X=H2a_models$X[i], Y=H2a_models$Y[i])
+  simul_plot <- gam_simul_CI(H2a_models$fit[i][[1]], H2a_models$dat[i][[1]], xlab=res$X, ylab=res$Y, title="")
+  H2a_plot_list[[i]] <-  simul_plot$p
+  H2a_plot_data <-  rbind(H2a_plot_data, data.frame(Xvar=res$X, Yvar=res$Y, adj=0, simul_plot$pred))
+}
+
+
+#Save models
+saveRDS(H2a_models, here("models/H2a_models.RDS"))
+
+#Save results
+saveRDS(H2a_res, here("results/unadjusted/H2a_res.RDS"))
+
+
+#Save plots
+#saveRDS(H2a_plot_list, here("figure-objects/H2a_unadj_splines.RDS"))
+
+#Save plot data
+#saveRDS(H2a_plot_data, here("figure-data/H2a_unadj_spline_data.RDS"))
+
+#### Hypothesis 2b ####
+#Maternal depression at Year 1 is positively associated with child telomere shortening between Year 1 and Year 2
+Xvars <- c("cesd_sum_ee_t2")            
+Yvars <- c("delta_TS_Z") 
+
+#Fit models
+H2b_models <- NULL
+for(i in Xvars){
+  for(j in Yvars){
+    res_unadj <- fit_RE_gam(d=d, X=i, Y=j,  W=NULL)
+    res <- data.frame(X=i, Y=j, fit=I(list(res_unadj$fit)), dat=I(list(res_unadj$dat)))
+    H2b_models <- bind_rows(H2b_models, res)
+  }
+}
+
+#Get primary contrasts
+H2b_res <- NULL
+for(i in 1:nrow(H2b_models)){
+  res <- data.frame(X=H2b_models$X[i], Y=H2b_models$Y[i])
+  preds <- predict_gam_diff(fit=H2b_models$fit[i][[1]], d=H2b_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
+  H2b_res <-  bind_rows(H2b_res , preds$res)
+}
+H2b_res$adjusted <- 0
+
+#Make list of plots
+H2b_plot_list <- NULL
+H2b_plot_data <- NULL
+for(i in 1:nrow(H2b_models)){
+  res <- data.frame(X=H2b_models$X[i], Y=H2b_models$Y[i])
+  simul_plot <- gam_simul_CI(H2b_models$fit[i][[1]], H2b_models$dat[i][[1]], xlab=res$X, ylab=res$Y, title="")
+  H2b_plot_list[[i]] <-  simul_plot$p
+  H2b_plot_data <-  rbind(H2b_plot_data, data.frame(Xvar=res$X, Yvar=res$Y, adj=0, simul_plot$pred))
+}
+
+
+#Save models
+saveRDS(H2b_models, here("models/H2b_models.RDS"))
+
+#Save results
+saveRDS(H2b_res, here("results/unadjusted/H2b_res.RDS"))
+
+
+#Save plots
+#saveRDS(H2b_plot_list, here("figure-objects/H2b_unadj_splines.RDS"))
+
+#Save plot data
+#saveRDS(H2b_plot_data, here("figure-data/H2b_unadj_spline_data.RDS"))
+
+#### Hypothesis 2c ####
+#Maternal depression at Year 1 is negatively associated with subsequent child telomere length at Year 2
+Xvars <- c("cesd_sum_ee_t2")            
+Yvars <- c("TS_t3_Z") 
+
+#Fit models
+H2c_models <- NULL
+for(i in Xvars){
+  for(j in Yvars){
+    res_unadj <- fit_RE_gam(d=d, X=i, Y=j,  W=NULL)
+    res <- data.frame(X=i, Y=j, fit=I(list(res_unadj$fit)), dat=I(list(res_unadj$dat)))
+    H2c_models <- bind_rows(H2c_models, res)
+  }
+}
+
+#Get primary contrasts
+H2c_res <- NULL
+for(i in 1:nrow(H2c_models)){
+  res <- data.frame(X=H2c_models$X[i], Y=H2c_models$Y[i])
+  preds <- predict_gam_diff(fit=H2c_models$fit[i][[1]], d=H2c_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
+  H2c_res <-  bind_rows(H2c_res , preds$res)
+}
+H2c_res$adjusted <- 0
+
+#Make list of plots
+H2c_plot_list <- NULL
+H2c_plot_data <- NULL
+for(i in 1:nrow(H2c_models)){
+  res <- data.frame(X=H2c_models$X[i], Y=H2c_models$Y[i])
+  simul_plot <- gam_simul_CI(H2c_models$fit[i][[1]], H2c_models$dat[i][[1]], xlab=res$X, ylab=res$Y, title="")
+  H2c_plot_list[[i]] <-  simul_plot$p
+  H2c_plot_data <-  rbind(H2c_plot_data, data.frame(Xvar=res$X, Yvar=res$Y, adj=0, simul_plot$pred))
+}
+
+
+#Save models
+saveRDS(H2c_models, here("models/H2c_models.RDS"))
+
+#Save results
+saveRDS(H2c_res, here("results/unadjusted/H2c_res.RDS"))
+
+
+#Save plots
+#saveRDS(H2c_plot_list, here("figure-objects/H2c_unadj_splines.RDS"))
+
+#Save plot data
+#saveRDS(H2c_plot_data, here("figure-data/H2c_unadj_spline_data.RDS"))
+
 #### Hypothesis 3 ####
-# telomere length at year 1 v. development at year 1
-Xvars <- c("TS_t2_Z")            
-Yvars <- c("endline_CDI_understand", "endline_CDI_say")
+#Parental stress measured at Year 2 is negatively associated with child telomere length measured at Year 2. 
+Xvars <- c("pss_sum_mom_t3")            
+Yvars <- c("TS_t3_Z") 
 
 #Fit models
 H3_models <- NULL
@@ -178,56 +368,3 @@ saveRDS(H3_res, here("results/unadjusted/H3_res.RDS"))
 
 #Save plot data
 #saveRDS(H3_plot_data, here("figure-data/H3_unadj_spline_data.RDS"))
-
-
-
-#### Hypothesis 4 ####
-#Telomere length at year 2 v. development at year 2
-Xvars <- c("TS_t3_Z")            
-Yvars <- c("endline_communication_score_Z", "endline_gross_motor_score_Z", 
-           "endline_personal_social_score_Z", "combined_easq_Z", "endline_A_not_B_score_Z", 
-           "endline_tower_test_Z") 
-
-#Fit models
-H4_models <- NULL
-for(i in Xvars){
-  for(j in Yvars){
-    res_unadj <- fit_RE_gam(d=d, X=i, Y=j,  W=NULL)
-    res <- data.frame(X=i, Y=j, fit=I(list(res_unadj$fit)), dat=I(list(res_unadj$dat)))
-    H4_models <- bind_rows(H4_models, res)
-  }
-}
-
-#Get primary contrasts
-H4_res <- NULL
-for(i in 1:nrow(H4_models)){
-  res <- data.frame(X=H4_models$X[i], Y=H4_models$Y[i])
-  preds <- predict_gam_diff(fit=H4_models$fit[i][[1]], d=H4_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
-  H4_res <-  bind_rows(H4_res , preds$res)
-}
-H4_res$adjusted <- 0
-
-#Make list of plots
-H4_plot_list <- NULL
-H4_plot_data <- NULL
-for(i in 1:nrow(H4_models)){
-  res <- data.frame(X=H4_models$X[i], Y=H4_models$Y[i])
-  simul_plot <- gam_simul_CI(H4_models$fit[i][[1]], H4_models$dat[i][[1]], xlab=res$X, ylab=res$Y, title="")
-  H4_plot_list[[i]] <-  simul_plot$p
-  H4_plot_data <-  rbind(H4_plot_data, data.frame(Xvar=res$X, Yvar=res$Y, adj=0, simul_plot$pred))
-}
-
-
-#Save models
-saveRDS(H4_models, here("models/H4_models.RDS"))
-
-#Save results
-saveRDS(H4_res, here("results/unadjusted/H4_res.RDS"))
-
-
-#Save plots
-#saveRDS(H4_plot_list, here("figure-objects/H4_unadj_splines.RDS"))
-
-#Save plot data
-#saveRDS(H4_plot_data, here("figure-data/H4_unadj_spline_data.RDS"))
-
