@@ -63,11 +63,11 @@ telo <- d%>%
   
 
 #select all exposures and outcomes
-ipv.dep.stress.telo <- d %>%
-  select(phys_viol_12m_t3, emot_viol_12m_t3, sex_viol_12m_t3, viol_12m_any_t3, life_phys_viol_t3, life_emot_viol_t3, life_sex_viol_t3, life_viol_any_t3, pss_sum_mom_t3, cesd_sum_t2, cesd_sum_ee_t3, delta_TS, TS_t2, TS_t3)
+# ipv.dep.stress.telo <- d %>%
+#   select(phys_viol_12m_t3, emot_viol_12m_t3, sex_viol_12m_t3, viol_12m_any_t3, life_phys_viol_t3, life_emot_viol_t3, life_sex_viol_t3, life_viol_any_t3, pss_sum_mom_t3, cesd_sum_t2, cesd_sum_ee_t3, delta_TS, TS_t2, TS_t3)
 
 #Z-scores of telomere measurements
-ipv.dep.stress.telo <- ipv.dep.stress.telo %>% 
+ipv.dep.stress.telo <- d %>% 
    mutate(TS_t2_Z = scale(TS_t2, center=TRUE, scale=TRUE)[,1]) %>%
    mutate(TS_t3_Z = scale(TS_t3, center=TRUE, scale=TRUE)[,1]) %>%
   mutate(delta_TS_Z = scale(delta_TS, center=TRUE, scale=TRUE)[,1])

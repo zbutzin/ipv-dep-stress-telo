@@ -57,7 +57,7 @@ H1a_res$adjusted <- 0
 H1a_plot_list <- NULL
 H1a_plot_data <- NULL
 for(i in 1:nrow(H1a_models)){
-  res <- data.frame(X=Ha1_models$X[i], Y=H1a_models$Y[i])
+  res <- data.frame(X=H1a_models$X[i], Y=H1a_models$Y[i])
   simul_plot <- gam_simul_CI(H1a_models$fit[i][[1]], H1a_models$dat[i][[1]], xlab=res$X, ylab=res$Y, title="")
   H1a_plot_list[[i]] <-  simul_plot$p
   H1a_plot_data <-  rbind(Ha1_plot_data, data.frame(Xvar=res$X, Yvar=res$Y, adj=0, simul_plot$pred))
@@ -75,7 +75,7 @@ saveRDS(H1a_res, here("results/unadjusted/H1a_res.RDS"))
 #saveRDS(H1_plot_list, here("figure-objects/H1_unadj_splines.RDS"))
 
 #Save plot data
-#saveRDS(H1_plot_data, here("figure-data/H1_unadj_spline_data.RDS"))
+saveRDS(H1a_plot_data, here("figure-data/H1_unadj_spline_data.RDS"))
 
 
 #### Hypothesis 1b ####
@@ -124,7 +124,7 @@ saveRDS(H1b_res, here("results/unadjusted/H1b_res.RDS"))
 #saveRDS(H2_plot_list, here("figure-objects/H2_unadj_splines.RDS"))
 
 #Save plot data
-#saveRDS(H2_plot_data, here("figure-data/H2_unadj_spline_data.RDS"))
+saveRDS(H1b_plot_data, here("figure-data/H1b_unadj_spline_data.RDS"))
 
 
 #### Hypothesis 1c ####
@@ -173,13 +173,13 @@ saveRDS(H1c_res, here("results/unadjusted/H1c_res.RDS"))
 #saveRDS(H3_plot_list, here("figure-objects/H3_unadj_splines.RDS"))
 
 #Save plot data
-#saveRDS(H3_plot_data, here("figure-data/H3_unadj_spline_data.RDS"))
+saveRDS(H1c_plot_data, here("figure-data/H1c_unadj_spline_data.RDS"))
 
 
 
 #### Hypothesis 2a ####
 #Maternal depression measured at Years 1 and 2 is negatively associated with concurrent child telomere length at Years 1 and 2
-Xvars <- c("cesd_sum_ee_t2", "cesd_sum_ee_t3")            
+Xvars <- c("cesd_sum_t2", "cesd_sum_ee_t3")            
 Yvars <- c("TS_t2_Z", "TS_t3_Z") 
 
 #Fit models
@@ -223,11 +223,12 @@ saveRDS(H2a_res, here("results/unadjusted/H2a_res.RDS"))
 #saveRDS(H2a_plot_list, here("figure-objects/H2a_unadj_splines.RDS"))
 
 #Save plot data
-#saveRDS(H2a_plot_data, here("figure-data/H2a_unadj_spline_data.RDS"))
+saveRDS(H2a_plot_data, here("figure-data/H2a_unadj_spline_data.RDS"))
+
 
 #### Hypothesis 2b ####
 #Maternal depression at Year 1 is positively associated with child telomere shortening between Year 1 and Year 2
-Xvars <- c("cesd_sum_ee_t2")            
+Xvars <- c("cesd_sum_t2")            
 Yvars <- c("delta_TS_Z") 
 
 #Fit models
@@ -271,11 +272,13 @@ saveRDS(H2b_res, here("results/unadjusted/H2b_res.RDS"))
 #saveRDS(H2b_plot_list, here("figure-objects/H2b_unadj_splines.RDS"))
 
 #Save plot data
-#saveRDS(H2b_plot_data, here("figure-data/H2b_unadj_spline_data.RDS"))
+saveRDS(H2b_plot_data, here("figure-data/H2b_unadj_spline_data.RDS"))
+
+
 
 #### Hypothesis 2c ####
 #Maternal depression at Year 1 is negatively associated with subsequent child telomere length at Year 2
-Xvars <- c("cesd_sum_ee_t2")            
+Xvars <- c("cesd_sum_t2")            
 Yvars <- c("TS_t3_Z") 
 
 #Fit models
@@ -319,7 +322,7 @@ saveRDS(H2c_res, here("results/unadjusted/H2c_res.RDS"))
 #saveRDS(H2c_plot_list, here("figure-objects/H2c_unadj_splines.RDS"))
 
 #Save plot data
-#saveRDS(H2c_plot_data, here("figure-data/H2c_unadj_spline_data.RDS"))
+saveRDS(H2c_plot_data, here("figure-data/H2c_unadj_spline_data.RDS"))
 
 #### Hypothesis 3 ####
 #Parental stress measured at Year 2 is negatively associated with child telomere length measured at Year 2. 
@@ -367,4 +370,7 @@ saveRDS(H3_res, here("results/unadjusted/H3_res.RDS"))
 #saveRDS(H3_plot_list, here("figure-objects/H3_unadj_splines.RDS"))
 
 #Save plot data
-#saveRDS(H3_plot_data, here("figure-data/H3_unadj_spline_data.RDS"))
+saveRDS(H3_plot_data, here("figure-data/H3_unadj_spline_data.RDS"))
+
+
+#### Adjust pvalues with BH procedure
