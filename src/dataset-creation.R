@@ -70,8 +70,8 @@ telo <- d%>%
 ipv.dep.stress.telo <- d %>% 
    mutate(TS_t2_Z = scale(TS_t2, center=TRUE, scale=TRUE)[,1]) %>%
    mutate(TS_t3_Z = scale(TS_t3, center=TRUE, scale=TRUE)[,1]) %>%
-  mutate(delta_TS_Z = scale(delta_TS, center=TRUE, scale=TRUE)[,1])
- #  mutate(endline_CDI_understand_Z = scale(endline_CDI_understand, center=T, scale=T)[,1]) %>%
+   mutate(delta_TS_Z = scale(delta_TS, center=TRUE, scale=TRUE)[,1])
+#  mutate(endline_CDI_understand_Z = scale(endline_CDI_understand, center=T, scale=T)[,1]) %>%
 #   mutate(endline_CDI_say_Z = scale(endline_CDI_say, center=T, scale=T)[,1]) %>%
 #   mutate(endline_communication_score_Z = scale(endline_communication_score, center=T, scale=T)[,1]) %>%
 #   mutate(endline_gross_motor_score_Z = scale(endline_gross_motor_score, center=T, scale=T)[,1]) %>%
@@ -81,5 +81,8 @@ ipv.dep.stress.telo <- d %>%
 #   mutate(endline_tower_test_Z = scale(endline_tower_test, center=T, scale=T)[,1]) %>%
 #   mutate(endline_CDI_say_Z = scale(endline_CDI_say, center=T, scale=T)[,1])
 
+ipv.dep.stress.telo$viol_12m_any_t3_recode <- ifelse(is.na(ipv.dep.stress.telo$viol_12m_any_t3) & 
+                                                       ipv.dep.stress.telo$life_viol_any_t3 == 0, 
+                                                     0, ipv.dep.stress.telo$viol_12m_any_t3)
 
 saveRDS(ipv.dep.stress.telo, paste0(dropboxDir,"Data/Cleaned/Audrie/ipv-dep-stress-telo-covariates.RDS"))

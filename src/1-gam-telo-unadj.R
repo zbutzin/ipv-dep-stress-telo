@@ -31,8 +31,8 @@ names(d)
 
 #### Hypothesis 1a ####
 # Maternal exposure to cumulative lifetime IPV measured at Year 2 is negatively associated with child telomere length measured at Year 2
-Xvars <- c("TS_t3_Z")            
-Yvars <- c("life_viol_any_t3") 
+Xvars <- c("life_viol_any_t3")            
+Yvars <- c("TS_t3_Z") 
 
 #Fit models
 H1a_models <- NULL
@@ -60,7 +60,7 @@ for(i in 1:nrow(H1a_models)){
   res <- data.frame(X=H1a_models$X[i], Y=H1a_models$Y[i])
   simul_plot <- gam_simul_CI(H1a_models$fit[i][[1]], H1a_models$dat[i][[1]], xlab=res$X, ylab=res$Y, title="")
   H1a_plot_list[[i]] <-  simul_plot$p
-  H1a_plot_data <-  rbind(Ha1_plot_data, data.frame(Xvar=res$X, Yvar=res$Y, adj=0, simul_plot$pred))
+  H1a_plot_data <-  rbind(H1a_plot_data, data.frame(Xvar=res$X, Yvar=res$Y, adj=0, simul_plot$pred))
 }
 
 
@@ -80,7 +80,7 @@ saveRDS(H1a_plot_data, here("figure-data/H1_unadj_spline_data.RDS"))
 
 #### Hypothesis 1b ####
 # Maternal exposure to IPV from Year 1 to Year 2 is positively associated with child telomere shortening from Year 1 to Year 2
-Xvars <- c("viol_12m_any_t3")            
+Xvars <- c("viol_12m_any_t3_recode")            
 Yvars <- c("delta_TS_Z") 
 
 #Fit models
@@ -129,7 +129,7 @@ saveRDS(H1b_plot_data, here("figure-data/H1b_unadj_spline_data.RDS"))
 
 #### Hypothesis 1c ####
 # Maternal exposure to IPV from Year 1 to Year 2 is negatively associated with child telomere length at Year 2
-Xvars <- c("viol_12m_any_t3")            
+Xvars <- c("viol_12m_any_t3_recode")            
 Yvars <- c("TS_t3_Z")
 
 #Fit models
@@ -372,5 +372,3 @@ saveRDS(H3_res, here("results/unadjusted/H3_res.RDS"))
 #Save plot data
 saveRDS(H3_plot_data, here("figure-data/H3_unadj_spline_data.RDS"))
 
-
-#### Adjust pvalues with BH procedure
