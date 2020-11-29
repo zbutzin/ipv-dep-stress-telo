@@ -38,6 +38,10 @@ if(dir.exists("/Users/zbutzindozier/Dropbox/WBB-EE-analysis/")){
   dropboxDir <- "/Users/zbutzindozier/Dropbox/WBB-EE-analysis/"
 }
 
+if(dir.exists("/Users/andre/Dropbox/WASHB-EE-analysis/WBB-EE-analysis/")){ 
+  dropboxDir <- "/Users/andre/Dropbox/WASHB-EE-analysis/WBB-EE-analysis/"
+}
+
 
 
 
