@@ -51,7 +51,6 @@ for(i in 1:nrow(H1a_models)){
   preds <- predict_gam_diff(fit=H1a_models$fit[i][[1]], d=H1a_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
   H1a_res <-  bind_rows(H1a_res , preds$res)
 }
-H1a_res$adjusted <- 0
 
 #Make list of plots
 H1a_plot_list <- NULL
@@ -75,7 +74,7 @@ saveRDS(H1a_res, here("results/unadjusted/H1a_res.RDS"))
 #saveRDS(H1_plot_list, here("figure-objects/H1_unadj_splines.RDS"))
 
 #Save plot data
-saveRDS(H1a_plot_data, here("figure-data/H1_unadj_spline_data.RDS"))
+saveRDS(H1a_plot_data, here("figure-data/H1a_unadj_spline_data.RDS"))
 
 
 #### Hypothesis 1b ####
@@ -100,7 +99,6 @@ for(i in 1:nrow(H1b_models)){
   preds <- predict_gam_diff(fit=H1b_models$fit[i][[1]], d=H1b_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
   H1b_res <-  bind_rows(H1b_res , preds$res)
 }
-H1b_res$adjusted <- 0
 
 #Make list of plots
 H1b_plot_list <- NULL
@@ -149,7 +147,6 @@ for(i in 1:nrow(H1c_models)){
   preds <- predict_gam_diff(fit=H1c_models$fit[i][[1]], d=H1c_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
   H1c_res <-  bind_rows(H1c_res , preds$res)
 }
-H1c_res$adjusted <- 0
 
 #Make list of plots
 H1c_plot_list <- NULL
@@ -184,12 +181,10 @@ Yvars <- c("TS_t2_Z", "TS_t3_Z")
 
 #Fit models
 H2a_models <- NULL
-for(i in Xvars){
-  for(j in Yvars){
-    res_unadj <- fit_RE_gam(d=d, X=i, Y=j,  W=NULL)
-    res <- data.frame(X=i, Y=j, fit=I(list(res_unadj$fit)), dat=I(list(res_unadj$dat)))
-    H2a_models <- bind_rows(H2a_models, res)
-  }
+for(i in c(1:2)){
+  res_unadj <- fit_RE_gam(d=d, X=Xvars[i], Y=Yvars[i],  W=NULL)
+  res <- data.frame(X=Xvars[i], Y=Yvars[i], fit=I(list(res_unadj$fit)), dat=I(list(res_unadj$dat)))
+  H2a_models <- bind_rows(H2a_models, res)
 }
 
 #Get primary contrasts
@@ -199,7 +194,6 @@ for(i in 1:nrow(H2a_models)){
   preds <- predict_gam_diff(fit=H2a_models$fit[i][[1]], d=H2a_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
   H2a_res <-  bind_rows(H2a_res , preds$res)
 }
-H2a_res$adjusted <- 0
 
 #Make list of plots
 H2a_plot_list <- NULL
@@ -248,7 +242,6 @@ for(i in 1:nrow(H2b_models)){
   preds <- predict_gam_diff(fit=H2b_models$fit[i][[1]], d=H2b_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
   H2b_res <-  bind_rows(H2b_res , preds$res)
 }
-H2b_res$adjusted <- 0
 
 #Make list of plots
 H2b_plot_list <- NULL
@@ -298,7 +291,6 @@ for(i in 1:nrow(H2c_models)){
   preds <- predict_gam_diff(fit=H2c_models$fit[i][[1]], d=H2c_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
   H2c_res <-  bind_rows(H2c_res , preds$res)
 }
-H2c_res$adjusted <- 0
 
 #Make list of plots
 H2c_plot_list <- NULL
@@ -346,7 +338,6 @@ for(i in 1:nrow(H3_models)){
   preds <- predict_gam_diff(fit=H3_models$fit[i][[1]], d=H3_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
   H3_res <-  bind_rows(H3_res , preds$res)
 }
-H3_res$adjusted <- 0
 
 #Make list of plots
 H3_plot_list <- NULL
@@ -371,4 +362,23 @@ saveRDS(H3_res, here("results/unadjusted/H3_res.RDS"))
 
 #Save plot data
 saveRDS(H3_plot_data, here("figure-data/H3_unadj_spline_data.RDS"))
+
+
+# save overall hypothesis results/models/figure data
+# H1
+H1_res <- rbind(H1a_res, H1b_res, H1c_res)
+H1_models <- rbind(H1a_models, H1b_models, H1c_models)
+H1_plot_data <- rbind(H1a_plot_data, H1b_plot_data, H1c_plot_data)
+
+# H2
+H2_res <- rbind(H2a_res, H2b_res, H2c_res)
+H2_models <- rbind(H2a_models, H2b_models, H2c_models)
+H2_plot_data <-rbind(H2a_plot_data, H2b_plot_data, H2c_plot_data)
+
+save(H1_res, file=here('results/unadjusted/H1_res.RDS'))
+save(H2_res, file=here('results/unadjusted/H2_res.RDS'))
+save(H1_models, file=here('models/H1_models.RDS'))
+save(H2_models, file=here('models/H2_models.RDS'))
+save(H1_plot_data, file=here('figure-data/H1_unadj_spline_data.RDS'))
+save(H2_plot_data, file=here('figure-data/H2_unadj_spline_data.RDS'))
 
