@@ -1,0 +1,8 @@
+""," "," "," "," "," Outcome, 75th Percentile v. 25th Percentile"," "," "," "," "," "," "," "
+"1"," "," "," "," ","Unadjusted"," "," "," ","Fully adjusted"," "," "," "
+"2"," ","Outcome","25th Percentile","75th Percentile","Predicted Outcome at 25th Percentile","Predicted Outcome at 75th Percentile","Coefficient (95% CI)","P-value","Predicted Outcome at 25th Percentile","Predicted Outcome at 75th Percentile","Coefficient (95% CI)","P-value"
+"3","Lifetime Exposure to IPV Year 2","Child TL Z-score Year 2","0","1","-0.03","-0.14","-0.11 (-0.26, 0.04)","0.24","0.08","-0.07","-0.15 (-0.32, 0.03)","0.2"
+"4","","Change in Child TL Z-Score",NA,NA,NA,NA," (, )",NA,NA,NA," (, )",NA
+"5","","","","","","","","","","","",""
+"6","Exposure to IPV in Past 12 Months Year 2","Child TL Z-score Year 2","0","1","-0.04","-0.18","-0.15 (-0.3, 0.01)","0.24","0.1","-0.08","-0.18 (-0.35, 0)","0.2"
+"7","","Change in Child TL Z-Score","0","1","-0.07","-0.17","-0.09 (-0.26, 0.08)","0.28","0.33","0.12","-0.21 (-0.4, -0.01)","0.07"

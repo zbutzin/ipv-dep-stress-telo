@@ -1,0 +1,4 @@
+""," "," "," "," "," Outcome, 75th Percentile v. 25th Percentile"," "," "," "," "," "," "," "
+"1"," "," "," "," ","Unadjusted"," "," "," ","Fully adjusted"," "," "," "
+"2"," ","Outcome","25th Percentile","75th Percentile","Predicted Outcome at 25th Percentile","Predicted Outcome at 75th Percentile","Coefficient (95% CI)","P-value","Predicted Outcome at 25th Percentile","Predicted Outcome at 75th Percentile","Coefficient (95% CI)","P-value"
+"3","Maternal Perceived Stress","Child TL Z-score Year 2","10","18","-0.08","-0.1","-0.02 (-0.13, 0.09)","0.76","-0.09","0.02","0.12 (-0.05, 0.29)","0.23"
