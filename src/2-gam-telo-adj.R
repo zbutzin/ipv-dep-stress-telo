@@ -1,42 +1,26 @@
 rm(list=ls())
 
 source(here::here("0-config.R"))
-source(here::here("src/0-gam-functions.R"))
 
 d <- readRDS(paste0(dropboxDir,"Data/Cleaned/Audrie/ipv-dep-stress-telo-covariates.RDS"))
-
-# add wealth index
-wealth <- read.csv("C:/Users/Sophia/Downloads/WBB-asset-index.csv")
-public <- read.csv("C:/Users/Sophia/Downloads/public-ids.csv")
-
-merged <- merge(wealth, public, by.x = 'dataid', by.y = 'dataid_r')
-head(merged)
-real_ids <- merged %>% select("dataid.y", "HHwealth", "HHwealth_quart", "clusterid", "block") %>%
-  mutate(dataid.y = as.character(dataid.y)) %>%
-  rename(dataid = dataid.y)
-
-d <- left_join(d, real_ids, by=c('dataid', 'clusterid', 'block'))
 
 #Set list of adjustment variables
 #Make vectors of adjustment variable names
 Wvars<-c("sex","birthord", "momage","momheight","momedu", 
-         "hfiacat", "Nlt18","Ncomp", "watmin", "walls", "floor", "HHwealth_quart",
-         "n_cattle", "n_goat", "n_chicken", "tr")
+         "hfiacat", "Nlt18","Ncomp", "watmin", "walls", "floor", "HHwealth", "tr")
 
 Wvars[!(Wvars %in% colnames(d))]
 
 #Add in time varying covariates:
-Wvars2<-c("monsoon_at2", "ageday_at2") 
-Wvars3<-c("monsoon_at2", "monsoon_at3", "ageday_at3") 
-Wvars23<-c("monsoon_at2", "monsoon_at3", "ageday_at2", "ageday_at3") 
-
-W2_total <- c(Wvars, Wvars2) %>% unique(.)
-W3_total <- c(Wvars, Wvars3) %>% unique(.)
-W23_total <- c(Wvars, Wvars23 %>% unique(.))
-
-Wvars2[!(Wvars2 %in% colnames(d))]
-Wvars3[!(Wvars3 %in% colnames(d))]
-Wvars23[!(Wvars23 %in% colnames(d))]
+Wvars1a1c<-c(Wvars, "ageday_ht3", "month_ht3", "mhle_month_t3") 
+Wvars1b<-c(Wvars, "ageday_ht2", "ageday_ht3", "month_ht2", "month_ht3", "mhle_month_t3") 
+Wvars1c<-c(Wvars, "monsoon_at2", "monsoon_at3", "ageday_at2", "ageday_at3") 
+Wvars2ai<-c(Wvars, "ageday_ht2", "month_ht2", "cesd_month_t2") 
+Wvars2aii<-c(Wvars, "ageday_ht3", "month_ht3", "mhle_month_t3") 
+Wvars2b<-c(Wvars, "ageday_ht2", "ageday_ht3", "month_ht2", "month_ht3", "cesd_month_t2") 
+Wvars2c<-c(Wvars, "ageday_ht3", "cesd_month_t2", "month_t3") 
+Wvars3mother<-Wvars1a1c
+Wvars3father<-c(Wvars, "ageday_ht3", "month_ht3", "pss_dad_month_t3")
 
 
 #Loop over exposure-outcome pairs
@@ -59,7 +43,7 @@ for(i in Xvars){
   for(j in Yvars){
     print(i)
     print(j)
-    res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=pick_covariates(j))
+    res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=Wvars1a1c)
     res <- data.frame(X=i, Y=j, fit=I(list(res_adj$fit)), dat=I(list(res_adj$dat)))
     H1_adj_models <- bind_rows(H1_adj_models, res)
   }
@@ -72,7 +56,11 @@ for(i in Xvars){
   for(j in Yvars){
     print(i)
     print(j)
-    res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=pick_covariates(j))
+    if(j=="delta_TS_Z"){
+      res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=Wvars1b) 
+    }else{
+      res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=Wvars1c) 
+    }
     res <- data.frame(X=i, Y=j, fit=I(list(res_adj$fit)), dat=I(list(res_adj$dat)))
     H1_adj_models <- bind_rows(H1_adj_models, res)
   }
@@ -82,7 +70,7 @@ for(i in Xvars){
 H1_adj_res <- NULL
 for(i in 1:nrow(H1_adj_models)){
   res <- data.frame(X=H1_adj_models$X[i], Y=H1_adj_models$Y[i])
-  preds <- predict_gam_diff(fit=H1_adj_models$fit[i][[1]], d=H1_adj_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
+  preds <- predict_gam_diff(fit=H1_adj_models$fit[i][[1]], d=H1_adj_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y, binaryX=T)
   H1_adj_res <-  bind_rows(H1_adj_res , preds$res)
 }
 
@@ -110,7 +98,7 @@ saveRDS(H1_adj_plot_data, here("figure-data/H1_adj_spline_data.RDS"))
 
 
 #### Hypothesis 2 ####
-Xvars <- c("cesd_sum_t2")            
+Xvars <- c("cesd_sum_t2", "cesd_sum_t2_binary")            
 Yvars <- c("TS_t2_Z", "TS_t3_Z", "delta_TS_Z")  
 
 #Fit models
@@ -119,19 +107,25 @@ for(i in Xvars){
   for(j in Yvars){
     print(i)
     print(j)
-    res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=pick_covariates(j))
+    if(j=="TS_t2_Z"){
+      res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=Wvars2ai) 
+    }else if(j=="delta_TS_Z"){
+      res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=Wvars2b) 
+    }else{
+      res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=Wvars2c) 
+    }
     res <- data.frame(X=i, Y=j, fit=I(list(res_adj$fit)), dat=I(list(res_adj$dat)))
     H2_adj_models <- bind_rows(H2_adj_models, res)
   }
 }
 
-Xvars <- c("cesd_sum_t3")            
+Xvars <- c("cesd_sum_ee_t3", "cesd_sum_ee_t3_binary")            
 Yvars <- c("TS_t3_Z")  
 for(i in Xvars){
   for(j in Yvars){
     print(i)
     print(j)
-    res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=pick_covariates(j))
+    res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=Wvars2aii)
     res <- data.frame(X=i, Y=j, fit=I(list(res_adj$fit)), dat=I(list(res_adj$dat)))
     H2_adj_models <- bind_rows(H2_adj_models, res)
   }
@@ -141,7 +135,11 @@ for(i in Xvars){
 H2_adj_res <- NULL
 for(i in 1:nrow(H2_adj_models)){
   res <- data.frame(X=H2_adj_models$X[i], Y=H2_adj_models$Y[i])
-  preds <- predict_gam_diff(fit=H2_adj_models$fit[i][[1]], d=H2_adj_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
+  if(grepl("binary", H2_adj_models$X[i])){
+    preds <- predict_gam_diff(fit=H2_adj_models$fit[i][[1]], d=H2_adj_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y, binaryX=T)
+  }else{
+    preds <- predict_gam_diff(fit=H2_adj_models$fit[i][[1]], d=H2_adj_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
+  }  
   H2_adj_res <-  bind_rows(H2_adj_res , preds$res)
 }
 
@@ -171,14 +169,20 @@ saveRDS(H2_adj_plot_data, here("figure-data/H2_adj_spline_data.RDS"))
 
 #### Hypothesis 3 ####
 #Parental stress measured at Year 2 is negatively associated with child telomere length measured at Year 2. 
-Xvars <- c("pss_sum_mom_t3")            
+Xvars <- c("pss_sum_mom_t3", "pss_sum_dad_t3")            
 Yvars <- c("TS_t3_Z") 
 
 #Fit models
 H3_adj_models <- NULL
 for(i in Xvars){
   for(j in Yvars){
-    res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=pick_covariates(j))
+    print(i)
+    print(j)
+    if(i=="pss_sum_mom_t3"){
+      res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=Wvars3mother) 
+    }else{
+      res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=Wvars3father) 
+    }
     res <- data.frame(X=i, Y=j, fit=I(list(res_adj$fit)), dat=I(list(res_adj$dat)))
     H3_adj_models <- bind_rows(H3_adj_models, res)
   }

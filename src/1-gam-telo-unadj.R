@@ -1,10 +1,10 @@
 rm(list=ls())
 
 source(here::here("0-config.R"))
-source(here::here("src/0-gam-functions.R"))
 
 d <- readRDS(paste0(dropboxDir,"Data/Cleaned/Audrie/ipv-dep-stress-telo-covariates.RDS"))
 names(d)
+
 #Example:
 
 #Fit GAM model with random effects for childid
@@ -48,7 +48,7 @@ for(i in Xvars){
 H1a_res <- NULL
 for(i in 1:nrow(H1a_models)){
   res <- data.frame(X=H1a_models$X[i], Y=H1a_models$Y[i])
-  preds <- predict_gam_diff(fit=H1a_models$fit[i][[1]], d=H1a_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
+  preds <- predict_gam_diff(fit=H1a_models$fit[i][[1]], d=H1a_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y, binaryX=T)
   H1a_res <-  bind_rows(H1a_res , preds$res)
 }
 
@@ -96,7 +96,7 @@ for(i in Xvars){
 H1b_res <- NULL
 for(i in 1:nrow(H1b_models)){
   res <- data.frame(X=H1b_models$X[i], Y=H1b_models$Y[i])
-  preds <- predict_gam_diff(fit=H1b_models$fit[i][[1]], d=H1b_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
+  preds <- predict_gam_diff(fit=H1b_models$fit[i][[1]], d=H1b_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y, binaryX=T)
   H1b_res <-  bind_rows(H1b_res , preds$res)
 }
 
@@ -144,7 +144,7 @@ for(i in Xvars){
 H1c_res <- NULL
 for(i in 1:nrow(H1c_models)){
   res <- data.frame(X=H1c_models$X[i], Y=H1c_models$Y[i])
-  preds <- predict_gam_diff(fit=H1c_models$fit[i][[1]], d=H1c_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
+  preds <- predict_gam_diff(fit=H1c_models$fit[i][[1]], d=H1c_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y, binaryX=T)
   H1c_res <-  bind_rows(H1c_res , preds$res)
 }
 
@@ -187,11 +187,23 @@ for(i in c(1:2)){
   H2a_models <- bind_rows(H2a_models, res)
 }
 
+Xvars <- c("cesd_sum_t2_binary", "cesd_sum_ee_t3_binary")
+Yvars <- c("TS_t2_Z", "TS_t3_Z") 
+for(i in c(1:2)){
+  res_unadj <- fit_RE_gam(d=d, X=Xvars[i], Y=Yvars[i],  W=NULL)
+  res <- data.frame(X=Xvars[i], Y=Yvars[i], fit=I(list(res_unadj$fit)), dat=I(list(res_unadj$dat)))
+  H2a_models <- bind_rows(H2a_models, res)
+}
+
 #Get primary contrasts
 H2a_res <- NULL
 for(i in 1:nrow(H2a_models)){
   res <- data.frame(X=H2a_models$X[i], Y=H2a_models$Y[i])
-  preds <- predict_gam_diff(fit=H2a_models$fit[i][[1]], d=H2a_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
+  if(grepl("binary", H2a_models$X[i])){
+    preds <- predict_gam_diff(fit=H2a_models$fit[i][[1]], d=H2a_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y, binaryX=T)
+  }else{
+    preds <- predict_gam_diff(fit=H2a_models$fit[i][[1]], d=H2a_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
+  }
   H2a_res <-  bind_rows(H2a_res , preds$res)
 }
 
@@ -222,7 +234,7 @@ saveRDS(H2a_plot_data, here("figure-data/H2a_unadj_spline_data.RDS"))
 
 #### Hypothesis 2b ####
 #Maternal depression at Year 1 is positively associated with child telomere shortening between Year 1 and Year 2
-Xvars <- c("cesd_sum_t2")            
+Xvars <- c("cesd_sum_t2", "cesd_sum_t2_binary")            
 Yvars <- c("delta_TS_Z") 
 
 #Fit models
@@ -239,7 +251,11 @@ for(i in Xvars){
 H2b_res <- NULL
 for(i in 1:nrow(H2b_models)){
   res <- data.frame(X=H2b_models$X[i], Y=H2b_models$Y[i])
-  preds <- predict_gam_diff(fit=H2b_models$fit[i][[1]], d=H2b_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
+  if(grepl("binary", H2b_models$X[i])){
+    preds <- predict_gam_diff(fit=H2b_models$fit[i][[1]], d=H2b_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y, binaryX=T)
+  }else{
+    preds <- predict_gam_diff(fit=H2b_models$fit[i][[1]], d=H2b_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
+  }
   H2b_res <-  bind_rows(H2b_res , preds$res)
 }
 
@@ -271,7 +287,7 @@ saveRDS(H2b_plot_data, here("figure-data/H2b_unadj_spline_data.RDS"))
 
 #### Hypothesis 2c ####
 #Maternal depression at Year 1 is negatively associated with subsequent child telomere length at Year 2
-Xvars <- c("cesd_sum_t2")            
+Xvars <- c("cesd_sum_t2", "cesd_sum_t2_binary")            
 Yvars <- c("TS_t3_Z") 
 
 #Fit models
@@ -288,8 +304,11 @@ for(i in Xvars){
 H2c_res <- NULL
 for(i in 1:nrow(H2c_models)){
   res <- data.frame(X=H2c_models$X[i], Y=H2c_models$Y[i])
-  preds <- predict_gam_diff(fit=H2c_models$fit[i][[1]], d=H2c_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
-  H2c_res <-  bind_rows(H2c_res , preds$res)
+  if(grepl("binary", H2c_models$X[i])){
+    preds <- predict_gam_diff(fit=H2c_models$fit[i][[1]], d=H2c_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y, binaryX=T)
+  }else{
+    preds <- predict_gam_diff(fit=H2c_models$fit[i][[1]], d=H2c_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=res$X, Yvar=res$Y)
+  }H2c_res <-  bind_rows(H2c_res , preds$res)
 }
 
 #Make list of plots
@@ -318,7 +337,7 @@ saveRDS(H2c_plot_data, here("figure-data/H2c_unadj_spline_data.RDS"))
 
 #### Hypothesis 3 ####
 #Parental stress measured at Year 2 is negatively associated with child telomere length measured at Year 2. 
-Xvars <- c("pss_sum_mom_t3")            
+Xvars <- c("pss_sum_mom_t3", "pss_sum_dad_t3")            
 Yvars <- c("TS_t3_Z") 
 
 #Fit models
