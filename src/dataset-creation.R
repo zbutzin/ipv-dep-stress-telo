@@ -14,11 +14,6 @@ ipv.dep.stress.telo <- d %>%
    mutate(TS_t3_Z = scale(TS_t3, center=TRUE, scale=TRUE)[,1]) %>%
    mutate(delta_TS_Z = scale(delta_TS, center=TRUE, scale=TRUE)[,1])
 
-#recode mothers who responded no to lifetime ipv as 0 for ipv in the last 12 mo
-ipv.dep.stress.telo$viol_12m_any_t3_recode <- ifelse(is.na(ipv.dep.stress.telo$viol_12m_any_t3) & 
-                                                       ipv.dep.stress.telo$life_viol_any_t3 == 0, 
-                                                     0, ipv.dep.stress.telo$viol_12m_any_t3)
-
 # add variables to turn cesd into binary variables
 # classify top 25% of mothers in sample as experiencing high depressive symptoms
 cesd_t2_q<-quantile(ipv.dep.stress.telo$cesd_sum_t2, na.rm=T)[4]
