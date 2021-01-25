@@ -186,10 +186,10 @@ names(tbl1)<- c("","","","n (%) or median (IQR)")
 
 #### Table 2 ####
 
-exposure <- c("life_viol_any_t3", "viol_12m_any_t3_recode")
-outcome <- c("TS_t3_Z", "delta_TS_Z")
-expo_var <- c("Lifetime Exposure to IPV Year 2", "Exposure to IPV in Past 12 Months Year 2")
-out_var <- c("Child TL Z-score Year 2", "Change in Child TL Z-Score")
+exposure <- c("life_viol_any_t3", "viol_12m_any_t3","viol_any_preg", "viol_any_t2")
+outcome <- c("TS_t3_Z", "TS_t2_Z","delta_TS_Z")
+expo_var <- c("Lifetime Exposure to IPV Year 2", "Exposure to IPV in Past 12 Months Year 2","Exposure to IPV during Pregnancy","Exposure to IPV in Past 12 Months Year 1")
+out_var <- c("Child TL Z-score Year 2", "Child TL Z-score Year 1","Change in Child TL Z-Score")
 
 tbl2 <- growth_tbl("IPV", expo_var, out_var, exposure, outcome, H1, H1adj)
 tbl2flex <- growth_tbl_flex("IPV", expo_var, out_var, exposure, outcome, H1, H1adj)
