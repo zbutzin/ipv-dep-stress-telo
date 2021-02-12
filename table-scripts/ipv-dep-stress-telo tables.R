@@ -19,7 +19,6 @@ H3adj <- readRDS(here('results/adjusted/H3_adj_res.RDS'))
 
 
 #### Functions for growth tables ####
-#### Functions for growth tables ####
 growth_tbl <- function(name, expo_var, out_var, exposure, outcome, results, results_adj){
   ### name: string name of group of exposures
   ### expo_var: vector of string exposures to include in table
