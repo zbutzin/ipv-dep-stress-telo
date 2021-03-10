@@ -23,12 +23,12 @@ H3_adj_res$H = 3
 full_res <- rbind(H1_res, H2_res, H3_res)
 full_adj_res <- rbind(H1_adj_res, H2_adj_res, H3_adj_res)
 
-full_res <- full_res %>% group_by(Y) %>% 
+full_res <- full_res %>% group_by(H) %>% 
   mutate(BH.Pval=p.adjust(Pval, method="BH")) %>%
   ungroup() %>%
   as.data.frame()
 
-full_adj_res <- full_adj_res %>% group_by(Y) %>% 
+full_adj_res <- full_adj_res %>% group_by(H) %>% 
   mutate(BH.Pval=p.adjust(Pval, method="BH")) %>%
   ungroup() %>%
   as.data.frame()

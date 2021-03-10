@@ -12,28 +12,35 @@ Wvars<-c("sex","birthord", "momage","momheight","momedu",
 Wvars[!(Wvars %in% colnames(d))]
 
 #Add in time varying covariates:
-Wvars1a1c<-c(Wvars, "ageday_ht3", "month_ht3", "mhle_month_t3") 
-Wvars1b<-c(Wvars, "ageday_ht2", "ageday_ht3", "month_ht2", "month_ht3", "mhle_month_t3") 
-Wvars1c<-c(Wvars, "monsoon_at2", "monsoon_at3", "ageday_at2", "ageday_at3") 
+#hypothesis 1, outcome=telomere length at year 2
+Wvars.H1.t3<-c(Wvars, "ageday_ht3", "month_ht3", "mhle_month_t3") 
+#hypothesis 1, outcome=change in telomere length
+Wvars.H1.d23<-c(Wvars, "ageday_ht2", "ageday_ht3", "month_ht2", "month_ht3", "mhle_month_t3") 
+#hypothesis 1, outcome=telomere length at year 1
+Wvars.H1.t2<-c(Wvars, "ageday_ht2", "month_ht2", "mhle_month_t3")
+#hypothesis 2, exposure=cesd at year 1, outcome=telomere length at year 1
 Wvars2ai<-c(Wvars, "ageday_ht2", "month_ht2", "cesd_month_t2") 
-Wvars2aii<-c(Wvars, "ageday_ht3", "month_ht3", "mhle_month_t3") 
+#hypothesis 2, exposure=cesd at year 2, outcome=telomere length at year 2
+Wvars2aii<-Wvars.H1.t3
+#hypothesis 2, exposure=cesd at year 1, outcome=change in telomere length
 Wvars2b<-c(Wvars, "ageday_ht2", "ageday_ht3", "month_ht2", "month_ht3", "cesd_month_t2") 
-Wvars2c<-c(Wvars, "ageday_ht3", "cesd_month_t2", "month_t3") 
-Wvars3mother<-Wvars1a1c
+#hypothesis 2, exposure=cesd at year 1, outcome=telomere length at year 2
+Wvars2c<-c(Wvars, "ageday_ht3", "cesd_month_t2", "month_ht3") 
+Wvars3mother<-Wvars.H1.t3
 Wvars3father<-c(Wvars, "ageday_ht3", "month_ht3", "pss_dad_month_t3")
 
 
 #Loop over exposure-outcome pairs
 
-pick_covariates <- function(j){
-  if(grepl("_t2", j)){Wset = W2_total}
-  if(grepl("_t3", j)){Wset = W3_total}
-  if(grepl("delta", j)){Wset = W23_total}
+pick_covariates_H1 <- function(j){
+  if(grepl("_t2", j)){Wset = Wvars.H1.t2}
+  if(grepl("_t3", j)){Wset = Wvars.H1.t3}
+  if(grepl("delta", j)){Wset = Wvars.H1.d23}
   return(Wset)
 }
 
-#### Hypothesis 1a ####
-# Maternal exposure to cumulative lifetime IPV measured at Year 2 is negatively associated with child telomere length measured at Year 2
+#### Hypothesis 1 ####
+# Maternal exposure to IPV measured at Year 2 is negatively associated with child telomere length
 Xvars <- c("life_viol_any_t3")            
 Yvars <- c("TS_t3_Z") 
 
@@ -43,24 +50,33 @@ for(i in Xvars){
   for(j in Yvars){
     print(i)
     print(j)
-    res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=Wvars1a1c)
+    res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=pick_covariates_H1(j))
     res <- data.frame(X=i, Y=j, fit=I(list(res_adj$fit)), dat=I(list(res_adj$dat)))
     H1_adj_models <- bind_rows(H1_adj_models, res)
   }
 }
 
-Xvars <- c("viol_12m_any_t3_recode")            
+Xvars <- c("viol_12m_any_t3")            
 Yvars <- c("delta_TS_Z", "TS_t3_Z")
 
 for(i in Xvars){
   for(j in Yvars){
     print(i)
     print(j)
-    if(j=="delta_TS_Z"){
-      res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=Wvars1b) 
-    }else{
-      res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=Wvars1c) 
-    }
+    res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=pick_covariates_H1(j)) 
+    res <- data.frame(X=i, Y=j, fit=I(list(res_adj$fit)), dat=I(list(res_adj$dat)))
+    H1_adj_models <- bind_rows(H1_adj_models, res)
+  }
+}
+
+Xvars <- c("viol_any_preg", "viol_any_t2")            
+Yvars <- c("TS_t2_Z", "TS_t3_Z", "delta_TS_Z")
+
+for(i in Xvars){
+  for(j in Yvars){
+    print(i)
+    print(j)
+    res_adj <- fit_RE_gam(d=d, X=i, Y=j,  W=pick_covariates_H1(j)) 
     res <- data.frame(X=i, Y=j, fit=I(list(res_adj$fit)), dat=I(list(res_adj$dat)))
     H1_adj_models <- bind_rows(H1_adj_models, res)
   }
@@ -147,7 +163,6 @@ for(i in 1:nrow(H2_adj_models)){
 H2_adj_plot_list <- NULL
 H2_adj_plot_data <- NULL
 for(i in 1:nrow(H2_adj_models)){
-  print(i)
   res <- data.frame(X=H2_adj_models$X[i], Y=H2_adj_models$Y[i])
   simul_plot <- gam_simul_CI(H2_adj_models$fit[i][[1]], H2_adj_models$dat[i][[1]], xlab=res$X, ylab=res$Y, title="")
   H2_adj_plot_list[[i]] <-  simul_plot$p
