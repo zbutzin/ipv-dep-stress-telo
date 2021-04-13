@@ -40,7 +40,7 @@ Wvars<-c("sex", "birthord", "momage","momheight","momedu",
 W <- full %>% select(all_of(Wvars))  
 
 miss <- data.frame(name = names(W), missing = colSums(is.na(W)), row.names = c(1:ncol(W)))
-for (i in 1:nrow(miss_sub)) {
+for (i in 1:nrow(miss)) {
   miss$class[i] <- class(W[,which(colnames(W) == miss[i, 1])])
 }
 miss
