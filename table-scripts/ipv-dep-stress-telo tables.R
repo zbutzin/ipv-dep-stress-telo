@@ -96,7 +96,7 @@ exposure <- c("life_viol_any_t3","viol_any_preg", "viol_any_t2","viol_12m_any_t3
 outcome <- c("TS_t2_Z", "TS_t3_Z", "delta_TS_Z")
 expo_var <- c("Lifetime Exposure to IPV Year 2","Exposure to IPV during Pregnancy",
               "Exposure to IPV during first year of child's life", "Exposure to IPV in Past 12 Months Year 2")
-out_var <- c("Telomere length Z-score Year 1", "Telomere length Z-score Year 1","Change in Telomere length Z-Score")
+out_var <- c("Telomere length Z-score Year 1", "Telomere length Z-score Year 2","Change in Telomere length Z-Score")
 
 tbl2 <- growth_tbl("IPV", expo_var, out_var, exposure, outcome, H1, H1adj, T)
 tbl2flex <- growth_tbl_flex("IPV", expo_var, out_var, exposure, outcome, H1, H1adj, T)
