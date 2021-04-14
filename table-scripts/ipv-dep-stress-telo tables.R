@@ -92,32 +92,40 @@ names(tbl1)<- c("","","","n (%) or median (IQR)")
 
 #### Table 2 ####
 
-exposure <- c("life_viol_any_t3", "viol_12m_any_t3","viol_any_preg", "viol_any_t2")
-outcome <- c("TS_t3_Z", "TS_t2_Z","delta_TS_Z")
-expo_var <- c("Lifetime Exposure to IPV Year 2", "Exposure to IPV in Past 12 Months Year 2","Exposure to IPV during Pregnancy","Exposure to IPV in Past 12 Months Year 1")
-out_var <- c("Child TL Z-score Year 2", "Child TL Z-score Year 1","Change in Child TL Z-Score")
+exposure <- c("life_viol_any_t3","viol_any_preg", "viol_any_t2","viol_12m_any_t3")
+outcome <- c("TS_t2_Z", "TS_t3_Z", "delta_TS_Z")
+expo_var <- c("Lifetime Exposure to IPV Year 2","Exposure to IPV during Pregnancy",
+              "Exposure to IPV during first year of child's life", "Exposure to IPV in Past 12 Months Year 2")
+out_var <- c("Telomere length Z-score Year 1", "Telomere length Z-score Year 1","Change in Telomere length Z-Score")
 
 tbl2 <- growth_tbl("IPV", expo_var, out_var, exposure, outcome, H1, H1adj, T)
 tbl2flex <- growth_tbl_flex("IPV", expo_var, out_var, exposure, outcome, H1, H1adj, T)
+tbl2supp <- growth_tbl("IPV", expo_var, out_var, exposure, outcome, H1, H1adj)
+tbl2flexsupp <- growth_tbl_flex("IPV", expo_var, out_var, exposure, outcome, H1, H1adj)
 
 #### Table 3 ####
-exposure <- c("cesd_sum_t2", "cesd_sum_ee_t3")
+exposure <- c("cesd_sum_t2", "cesd_sum_t2_binary", "cesd_sum_ee_t3", "cesd_sum_ee_t3_binary")
 outcome <- c("TS_t2_Z","TS_t3_Z","delta_TS_Z")
-expo_var <- c("Maternal Depression year 1", "Maternal Depression Year 2")
-out_var <- c("Child TL Z-score Year 1","Child TL Z-score Year 2","Change in Child TL Z-Score")
+expo_var <- c("Maternal Depression Year 1","Binary Maternal Depression Year 1",
+              "Maternal Depression Year 2","Binary Maternal Depression Year 2")
+out_var <- c("Telomere length Z-score Year 1","Telomere length Z-score Year 2","Change in Telomere length Z-Score")
 
 tbl3 <- growth_tbl("Maternal Depression", expo_var, out_var, exposure, outcome, H2, H2adj, T)
 tbl3flex <- growth_tbl_flex("Maternal Depression", expo_var, out_var, exposure, outcome, H2, H2adj, T)
+tbl3supp <- growth_tbl("Maternal Depression", expo_var, out_var, exposure, outcome, H2, H2adj)
+tbl3flexsupp <- growth_tbl_flex("Maternal Depression", expo_var, out_var, exposure, outcome, H2, H2adj)
 
 
 #### Table 4 ####
-exposure <- c("pss_sum_mom_t3")
+exposure <- c("pss_sum_mom_t3", "pss_sum_dad_t3")
 outcome <- c("TS_t3_Z")
-expo_var <- c("Maternal Perceived Stress")
-out_var <- c("Child TL Z-score Year 2")
+expo_var <- c("Maternal Perceived Stress", "Paternal Perceived Stress")
+out_var <- c("Telomere Length Z-score Year 2")
 
-tbl4 <- growth_tbl("Maternal Stress", expo_var, out_var, exposure, outcome, H3, H3adj, T)
-tbl4flex <- growth_tbl_flex("Maternal Stress", expo_var, out_var, exposure, outcome, H3, H3adj, T)
+tbl4 <- growth_tbl("Parental Stress", expo_var, out_var, exposure, outcome, H3, H3adj, T)
+tbl4flex <- growth_tbl_flex("Parental Stress", expo_var, out_var, exposure, outcome, H3, H3adj, T)
+tbl4supp <- growth_tbl("Parental Stress", expo_var, out_var, exposure, outcome, H3, H3adj)
+tbl4flexsupp <- growth_tbl_flex("Parental Stress", expo_var, out_var, exposure, outcome, H3, H3adj)
 
 
 #### SAVE TABLES ####
@@ -126,5 +134,16 @@ write.csv(tbl2, here('tables/ipv-dep-stress-telo-table1.csv'))
 write.csv(tbl3, here('tables/ipv-dep-stress-telo-table2.csv'))
 write.csv(tbl4, here('tables/ipv-dep-stress-telo-table3.csv'))
 
-save_as_docx( "Table 1" = tbl2flex, "Table 2" = tbl3flex, "Table 3" = tbl4flex, path='/Users/lgg/Documents/Research\ Group/IPV\ and\ Telomere/ipv-dep-stress-telo-tables.docx')
+write.csv(tbl2supp, here('tables/ipv-dep-stress-telo-table1supp.csv'))
+write.csv(tbl3supp, here('tables/ipv-dep-stress-telo-table2supp.csv'))
+write.csv(tbl4supp, here('tables/ipv-dep-stress-telo-table3supp.csv'))
 
+save_as_docx( "Table 1: Association Between Maternal Exposure to IPV and Child Telomere Length" = tbl2flex, 
+              "Table 2: Association Between Maternal Depression and Child Telomere Length" = tbl3flex, 
+              "Table 3: Association Between Parental Stress and Child Telomere Length" = tbl4flex, 
+              path='C:/Users/Sophia/Documents/WASH/WASH IPV and Telomeres/ipv-dep-stress-telo-tables.docx')
+
+save_as_docx( "Table 1: Association Between Maternal Exposure to IPV and Child Telomere Length" = tbl2flexsupp, 
+              "Table 2: Association Between Maternal Depression and Child Telomere Length" = tbl3flexsupp, 
+              "Table 3: Association Between Parental Stress and Child Telomere Length" = tbl4flexsupp, 
+              path='C:/Users/Sophia/Documents/WASH/WASH IPV and Telomeres/ipv-dep-stress-telo-tables supplementary.docx')
