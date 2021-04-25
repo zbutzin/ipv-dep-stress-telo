@@ -18,25 +18,6 @@ H3adj <- readRDS(here('results/adjusted/H3_adj_res.RDS'))
 
 #### Functions for growth tables ####
 source(here::here("table-functions.R"))
-  # format for export
-  flextbl<-flextable(tbl, col_keys=names(tbl))
-  flextbl <- set_header_labels(flextbl,
-                               values = list("V1" = " ", "V2" = " ", "V3" = " ", "V4" = " ", "V5" = " ",
-                                             "V6" = "Predicted Outcome at 25th Percentile", "V7" = "Predicted Outcome at 75th Percentile", "V8" = "Coefficient (95% CI)", "V9" = "P-value", "V10" = "FDR Corrected P-value",
-                                             "V11" = "Predicted Outcome at 25th Percentile", "V12" = "Predicted Outcome at 75th Percentile", "V13" = "Coefficient (95% CI)", "V14" = "P-value", "V15" = "FDR Corrected P-value"))
-  flextbl <- add_header_row(flextbl, values = c("","","","","", "Unadjusted", "Fully adjusted"), colwidths=c(1,1,1,1,1,5,5))
-  # flextbl <- hline_top(flextbl, part="header", border=fp_border(color="black"))
-  flextbl <- add_header_row(flextbl, values = c(name, "Outcome","N","25th Percentile","75th Percentile", "Outcome, 75th Percentile v. 25th Percentile"), colwidths=c(1,1,1,1,1,10))
-  # flextbl <- hline_top(flextbl, part="header", border=fp_border(color="black"))
-  flextbl <- hline(flextbl, part="header", border=fp_border(color="black"))
-  flextbl <- hline_bottom(flextbl, part="body", border=fp_border(color="black"))
-  flextbl <- hline_top(flextbl, part="header", border=fp_border(color="black"))
-  flextbl <- align(flextbl, align = "center", part = "all")
-  flextbl <- align(flextbl, j = c(1, 2), align = "left", part="all")
-  flextbl <- autofit(flextbl, part = "all")
-  flextbl <- fit_to_width(flextbl, max_width=8)
-  flextbl
-}
 
 
 #### MAIN TABLES ####
@@ -99,7 +80,7 @@ expo_var <- c("Lifetime Exposure to IPV Year 2","Exposure to IPV during Pregnanc
 out_var <- c("Telomere length Z-score Year 1", "Telomere length Z-score Year 2","Change in Telomere length Z-Score")
 
 tbl2 <- growth_tbl("IPV", expo_var, out_var, exposure, outcome, H1, H1adj, T)
-tbl2flex <- growth_tbl_flex("IPV", expo_var, out_var, exposure, outcome, H1, H1adj, T)
+tbl2flex <- growth_tbl_flex("IPV", expo_var, out_var, exposure, outcome, H1, H1adj, T, 1.6, 1.3)
 tbl2supp <- growth_tbl("IPV", expo_var, out_var, exposure, outcome, H1, H1adj)
 tbl2flexsupp <- growth_tbl_flex("IPV", expo_var, out_var, exposure, outcome, H1, H1adj)
 
@@ -111,7 +92,7 @@ expo_var <- c("Maternal Depression Year 1","Binary Maternal Depression Year 1",
 out_var <- c("Telomere length Z-score Year 1","Telomere length Z-score Year 2","Change in Telomere length Z-Score")
 
 tbl3 <- growth_tbl("Maternal Depression", expo_var, out_var, exposure, outcome, H2, H2adj, T)
-tbl3flex <- growth_tbl_flex("Maternal Depression", expo_var, out_var, exposure, outcome, H2, H2adj, T)
+tbl3flex <- growth_tbl_flex("Maternal Depression", expo_var, out_var, exposure, outcome, H2, H2adj, T, 1.3, 1.3)
 tbl3supp <- growth_tbl("Maternal Depression", expo_var, out_var, exposure, outcome, H2, H2adj)
 tbl3flexsupp <- growth_tbl_flex("Maternal Depression", expo_var, out_var, exposure, outcome, H2, H2adj)
 
@@ -123,7 +104,7 @@ expo_var <- c("Maternal Perceived Stress", "Paternal Perceived Stress")
 out_var <- c("Telomere Length Z-score Year 2")
 
 tbl4 <- growth_tbl("Parental Stress", expo_var, out_var, exposure, outcome, H3, H3adj, T)
-tbl4flex <- growth_tbl_flex("Parental Stress", expo_var, out_var, exposure, outcome, H3, H3adj, T)
+tbl4flex <- growth_tbl_flex("Parental Stress", expo_var, out_var, exposure, outcome, H3, H3adj, T, 1, 1.2)
 tbl4supp <- growth_tbl("Parental Stress", expo_var, out_var, exposure, outcome, H3, H3adj)
 tbl4flexsupp <- growth_tbl_flex("Parental Stress", expo_var, out_var, exposure, outcome, H3, H3adj)
 
@@ -141,7 +122,8 @@ write.csv(tbl4supp, here('tables/ipv-dep-stress-telo-table3supp.csv'))
 save_as_docx( "Table 1: Association Between Maternal Exposure to IPV and Child Telomere Length" = tbl2flex, 
               "Table 2: Association Between Maternal Depression and Child Telomere Length" = tbl3flex, 
               "Table 3: Association Between Parental Stress and Child Telomere Length" = tbl4flex, 
-              path='C:/Users/Sophia/Documents/WASH/WASH IPV and Telomeres/ipv-dep-stress-telo-tables.docx')
+              path='C:/Users/Sophia/Documents/WASH/WASH IPV and Telomeres/ipv-dep-stress-telo-tables v2.docx',
+              pr_section = sect_properties)
 
 save_as_docx( "Table 1: Association Between Maternal Exposure to IPV and Child Telomere Length" = tbl2flexsupp, 
               "Table 2: Association Between Maternal Depression and Child Telomere Length" = tbl3flexsupp, 
