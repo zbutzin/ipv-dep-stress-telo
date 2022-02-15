@@ -2,12 +2,12 @@ rm(list=ls())
 
 source(here::here("0-config.R"))
 
-d <- readRDS(paste0(dropboxDir,"Data/Cleaned/Audrie/ipv-dep-stress-telo-covariates.RDS"))
+#d <- readRDS(paste0(dropboxDir,"Data/Cleaned/Audrie/ipv-dep-stress-telo-covariates.RDS"))
 
 #Set list of adjustment variables
 #Make vectors of adjustment variable names
 Wvars<-c("sex","birthord", "momage","momheight","momedu", 
-         "hfiacat", "Nlt18","Ncomp", "watmin", "walls", "floor", "HHwealth", "tr")
+         "hfiacat", "Nlt18","Ncomp", "watmin", "walls", "floor", "HHwealth_scaled", "tr")
 
 Wvars[!(Wvars %in% colnames(d))]
 
