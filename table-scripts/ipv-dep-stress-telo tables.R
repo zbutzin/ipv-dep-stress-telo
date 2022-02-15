@@ -12,7 +12,7 @@ library('data.table')
 #d <-box_read("871638120165") # %>% filter(immune_dev==1)
 
 # load enrollment characteristics and results
-d <- read.csv(paste0(dropboxDir, "Data/Cleaned/Audrie/bangladesh-dm-ee-stress-growth-covariates-stresslab-anthro.csv"))
+#d <- read.csv(paste0(dropboxDir, "Data/Cleaned/Audrie/bangladesh-dm-ee-stress-growth-covariates-stresslab-anthro.csv"))
 H1 <- readRDS(here('results/unadjusted/H1_res.RDS'))
 H2 <- readRDS(here('results/unadjusted/H2_res.RDS'))
 H3 <- readRDS(here('results/unadjusted/H3_res.RDS'))
