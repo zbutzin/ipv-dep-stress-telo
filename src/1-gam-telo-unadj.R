@@ -2,8 +2,8 @@ rm(list=ls())
 
 source(here::here("0-config.R"))
 
-d <- readRDS(paste0(dropboxDir,"Data/Cleaned/Audrie/ipv-dep-stress-telo-covariates.RDS"))
-names(d)
+#d <- readRDS(paste0(dropboxDir,"Data/Cleaned/Audrie/ipv-dep-stress-telo-covariates.RDS"))
+#names(d)
 
 #Example:
 
