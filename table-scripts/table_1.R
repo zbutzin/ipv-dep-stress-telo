@@ -3,7 +3,7 @@ library(tidyverse)
 library(flextable)
 library(officer)
 
-d <- readRDS("/Users/lgg/Box/washb/Bangladesh/Master\ Dataset/bangladesh-cleaned-master-data.RDS") %>% filter(ipv_telo==1)
+#d <- readRDS("/Users/lgg/Box/washb/Bangladesh/Master\ Dataset/bangladesh-cleaned-master-data.RDS") %>% filter(ipv_telo==1)
 
 filtering <- function(row){
   any(!is.na(row))
@@ -35,7 +35,7 @@ characteristics <- function(d, child_char = NULL, child_char_names = NULL, mom_c
   nperc <- function(vector){
     n <- sum(vector==1, na.rm=T)
     perc <- round(n/sum(!is.na(vector))*100)
-    child_char_names  }
+    paste(n, " (", perc, "%)", sep="")}
   
   mediqr <- function(vector){
     quantiles <- round(quantile(vector, na.rm=T), 2)
@@ -90,8 +90,7 @@ characteristics <- function(d, child_char = NULL, child_char_names = NULL, mom_c
   tbl1flex
 }
 
-enroll <- characteristics(d, child_char = c("hfias"), 
-                          child_char_names = "") #Household Food Insecurity
+enroll <- characteristics(d)
 sect_properties <- prop_section(
   page_size = page_size(orient = "portrait", width=8.5, height=11),
   page_margins = page_mar(bottom=.3, top=.3, right=.3, left=.3, gutter = 0)
