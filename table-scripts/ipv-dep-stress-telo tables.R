@@ -10,9 +10,11 @@ library('data.table')
 #library(boxr)
 #usethis::edit_r_environ()
 #d <-box_read("871638120165") # %>% filter(immune_dev==1)
+d <- readRDS("/Users/lgg/Box/washb/Bangladesh/Master\ Dataset/bangladesh-cleaned-master-data.RDS") %>% filter(ipv_telo==1)
+
 
 # load enrollment characteristics and results
-d <- read.csv(paste0(dropboxDir, "Data/Cleaned/Audrie/bangladesh-dm-ee-stress-growth-covariates-stresslab-anthro.csv"))
+#d <- read.csv(paste0(dropboxDir, "Data/Cleaned/Audrie/bangladesh-dm-ee-stress-growth-covariates-stresslab-anthro.csv"))
 H1 <- readRDS(here('results/unadjusted/H1_res.RDS'))
 H2 <- readRDS(here('results/unadjusted/H2_res.RDS'))
 H3 <- readRDS(here('results/unadjusted/H3_res.RDS'))
@@ -128,10 +130,10 @@ write.csv(tbl4supp, here('tables/ipv-dep-stress-telo-table3supp.csv'))
 save_as_docx( "Table 1: Association Between Maternal Exposure to IPV and Child Telomere Length" = tbl2flex, 
               "Table 2: Association Between Maternal Depression and Child Telomere Length" = tbl3flex, 
               "Table 3: Association Between Parental Stress and Child Telomere Length" = tbl4flex, 
-              path='C:/Users/Sophia/Documents/WASH/WASH IPV and Telomeres/ipv-dep-stress-telo-tables v2.docx',
+              path="/Users/lgg/Documents/Research\ Group/Code/ipv-dep-stress-telo-new/tables/ipv-telo-tables.docx",
               pr_section = sect_properties)
 
 save_as_docx( "Table 1: Association Between Maternal Exposure to IPV and Child Telomere Length" = tbl2flexsupp, 
               "Table 2: Association Between Maternal Depression and Child Telomere Length" = tbl3flexsupp, 
               "Table 3: Association Between Parental Stress and Child Telomere Length" = tbl4flexsupp, 
-              path='C:/Users/Sophia/Documents/WASH/WASH IPV and Telomeres/ipv-dep-stress-telo-tables supplementary.docx')
+              path='/Users/lgg/Documents/Research\ Group/Code/ipv-dep-stress-telo-new/ipv-dep-stress-telo-tables supplementary.docx')

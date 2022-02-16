@@ -91,7 +91,7 @@ characteristics <- function(d, child_char = NULL, child_char_names = NULL, mom_c
 }
 
 enroll <- characteristics(d, child_char = c("hfias"), 
-                          child_char_names = c("Household Food Insecurity"))
+                          child_char_names = "") #Household Food Insecurity
 sect_properties <- prop_section(
   page_size = page_size(orient = "portrait", width=8.5, height=11),
   page_margins = page_mar(bottom=.3, top=.3, right=.3, left=.3, gutter = 0)
