@@ -17,10 +17,16 @@ library(SuperLearner)
 library(devtools)
 library(kableExtra)
 library(here)
+library(cowplot)
+library(mgcv)
+library(psych)
+
+
 if(!require(faraway)){
-  install.packages("faraway") 
+  install.packages("faraway")
   library(faraway)
 }
+
 if(!require(washbgam)){
   devtools::install_github("washb-eed-substudies/washbgam")
   library(washbgam)
@@ -33,26 +39,16 @@ if(dir.exists("C:/Users/andre/Dropbox/WASHB-EE-analysis/WBB-EE-analysis/")){
 if(dir.exists("/Users/audrielin/Dropbox/WBB-EE-analysis/")){ 
   dropboxDir <- "/Users/audrielin/Dropbox/WBB-EE-analysis/"
 }
-if(dir.exists("C:/Users/Sophia/Dropbox/WASH/")){ 
-  dropboxDir <- "C:/Users/Sophia/Dropbox/WASH/"
+if(dir.exists("/Users/sophiatan/Dropbox/WASH/")){ 
+  dropboxDir <- "/Users/sophiatan/Dropbox/WASH/"
 }
 if(dir.exists("/Users/lisa/Dropbox/WASH/")){ 
   dropboxDir <- "/Users/lisa/Dropbox/WASH/"
 }
-if(dir.exists("/Users/caitlinhemlock/Dropbox/")){ 
-  dropboxDir <- "/Users/caitlinhemlock/"
-}
-if(dir.exists("/Users/zbutzindozier/Dropbox/WBB-EE-analysis/")){ 
-  dropboxDir <- "/Users/zbutzindozier/Dropbox/WBB-EE-analysis/"
-}
-
-if(dir.exists("/Users/andre/Dropbox/WASHB-EE-analysis/WBB-EE-analysis/")){ 
-  dropboxDir <- "/Users/andre/Dropbox/WASHB-EE-analysis/WBB-EE-analysis/"
-}
 
 library(boxr)
-box_auth()
-d <- box_read(871638120165) %>% filter(ipv_telo == 1)
+#box_auth()
+#d <- box_read(871638120165) %>% filter(pregnancy_immune == 1)
 
 theme_ki<-function(){
   theme_bw() %+replace%
@@ -74,3 +70,16 @@ tableau10 <- c("#1F77B4","#FF7F0E","#2CA02C","#D62728",
                "#BCBD22","#17BECF")
 
 
+#save R package versions
+
+# # Only run thise lines once when project is initialized 
+# #Call renv::init() to initialize a new project-local environment with a private R library,
+# renv::init(project=here()) 
+# 
+# # Only run thise line when packages are updated
+# #Call renv::snapshot() to save the state of the project library to the lockfile (called renv.lock),
+# renv::snapshot()
+# 
+# # Only run these lines when needed (upon initialization and then when package versions need to be restored)
+# #call renv::restore() to  revert to the previous state as encoded in the lockfile 
+# renv::restore()
