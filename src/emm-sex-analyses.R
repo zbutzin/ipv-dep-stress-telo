@@ -3,7 +3,7 @@ rm(list=ls())
 source(here::here("0-config.R"))
 source(here::here("table-functions.R"))
 
-d <- readRDS("/Users/kjung0909/Documents/Research/WASHB/bangladesh-cleaned-master-data.RDS") %>% filter(.$ipv_telo == 1)
+d <- readRDS("/Users/sophiatan/Downloads/bangladesh-cleaned-master-data.RDS") %>% filter(.$ipv_telo == 1)
 #d<-readRDS(paste0(dropboxDir, "Data/Cleaned/Audrie/pregnancy_child_immune_covariates_data.RDS"))
 
 #Maternal ipv/dep/stress and child telo EMM by child sex
@@ -93,14 +93,14 @@ for(i in Xvars){
 H1_adj_res <- NULL
 for(i in 1:nrow(H1_adj_models)){
   res <- data.frame(X=H1_adj_models$X[i], Y=H1_adj_models$Y[i])
-  if(grepl("_def", H1_adj_models$X[i])){
+  if(grepl("viol|binary", H1_adj_models$X[i])){
     preds <- predict_gam_emm(fit=H1_adj_models$fit[i][[1]], d=H1_adj_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=H1_adj_models$X[i], Yvar=H1_adj_models$Y[i], binaryX=T)
   }else{
     preds <- predict_gam_emm(fit=H1_adj_models$fit[i][[1]], d=H1_adj_models$dat[i][[1]], quantile_diff=c(0.25,0.75), Xvar=H1_adj_models$X[i], Yvar=H1_adj_models$Y[i])
   }
   gamm_diff_res <- data.frame(V=H1_adj_models$V[i] , preds$res) %>% mutate(int.Pval = c(NA, H1_adj_models$int.p[[i]]))
   
-#  H1_adj_res <-  bind_rows(H1_adj_res , gamm_diff_res)
+  H1_adj_res <-  bind_rows(H1_adj_res , gamm_diff_res)
 }
 
 
