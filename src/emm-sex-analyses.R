@@ -47,8 +47,12 @@ for(i in 1:nrow(H1_models)){
   H1_plot_data <-  rbind(H1_plot_data, data.frame(Xvar=res$X, Yvar=res$Y, adj=0, simul_plot$pred))
 }
 
-H1_res <- H1_res %>% mutate(BH.Pval=p.adjust(Pval, method="BH"),
-                            BH.Pval.int=p.adjust(int.Pval, method="BH")) 
+H1_res <- H1_res %>% mutate(H=case_when(grepl("viol", X)~1,
+                                        grepl("cesd", X)~2,
+                                        T~3))
+H1_res <- H1_res %>% group_by(H) %>%
+  mutate(BH.Pval=p.adjust(Pval, method="BH"),
+         BH.Pval.int=p.adjust(int.Pval, method="BH")) 
 
 #Save models
 saveRDS(H1_models, here("models/emm_sex.RDS"))
@@ -114,8 +118,12 @@ for(i in 1:nrow(H1_adj_models)){
   H1_adj_plot_data <-  rbind(H1_adj_plot_data, data.frame(Xvar=res$X, Yvar=res$Y, adj=0, simul_plot$pred %>% subset(., select = c(Y,X,id,fit,se.fit,uprP, lwrP,uprS,lwrS))))
 }
 
-H1_adj_res <- H1_adj_res %>% mutate(BH.Pval=p.adjust(Pval, method="BH"),
-                                    BH.Pval.int=p.adjust(int.Pval, method="BH")) 
+H1_adj_res <- H1_adj_res %>% mutate(H=case_when(grepl("viol", X)~1,
+                                                grepl("cesd", X)~2,
+                                                T~3))
+H1_adj_res <- H1_adj_res %>% group_by(H) %>%
+  mutate(BH.Pval=p.adjust(Pval, method="BH"),
+         BH.Pval.int=p.adjust(int.Pval, method="BH")) 
 
 #Save results
 saveRDS(H1_adj_res, here("results/adjusted/emm_sex_adj_res.RDS"))
