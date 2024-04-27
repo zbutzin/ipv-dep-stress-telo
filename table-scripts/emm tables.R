@@ -13,6 +13,6 @@ tbl1 <- subgroup_tbl("Intimate Partner Violence",
                      c("TS_t2_Z", "TS_t3_Z", "delta_TS_Z"),
                      c("sex"), emm)
 
-save_as_docx("EMM Table: Effect modification of maternal micronutrients and child immune status" = tbl1,
-             path = "/Users/kjung0909/Documents/Research/WASHB/ipv-TL/ipv-dep-stress-telo/tables/main/ipv-telo-emm1.docx",
+save_as_docx("EMM Table: Effect modification of maternal IPV and child telomere length" = tbl1,
+             path = "/Users/kjung0909/Documents/Research/WASHB/ipv-TL/ipv-dep-stress-telo/tables/ipv-telo-emm1.docx",
              pr_section = sect_properties)
