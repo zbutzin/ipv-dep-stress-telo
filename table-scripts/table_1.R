@@ -3,14 +3,14 @@ library(tidyverse)
 library(flextable)
 library(officer)
 
-#d <- readRDS("/Users/lgg/Box/washb/Bangladesh/Master\ Dataset/bangladesh-cleaned-master-data.RDS") %>% filter(ipv_telo==1)
+d <- readRDS("/Users/kjung0909/Documents/Research/WASHB/bangladesh-cleaned-master-data.RDS") %>% filter(ipv_telo==1)
 
 filtering <- function(row){
   any(!is.na(row))
 }
 
 # MATERNAL ENROLLMENT CHARACTERISTICS UNCOMMENT AND FILL IN THIS CODE (UNCOMMENT WITH CTRL+SHIFT+C ON PC)
-exp <- c("viol_any_t2", "life_viol_any_t3", "cesd_sum_t2", "life_viol_any_t3","viol_12m_any_t3", "pss_sum_mom_t3", "pss_sum_dad_t3", "cesd_sum_ee_t3") 
+exp <- c("viol_any_t2", "viol_any_preg", "cesd_sum_t2", "life_viol_any_t3","viol_12m_any_t3", "pss_sum_mom_t3", "pss_sum_dad_t3", "cesd_sum_ee_t3") 
 out <- c("TS_t2","TS_t3", "delta_TS") 
 d <- d[apply(select(d, all_of(exp)), 1, filtering),] # only has rows where we have exposure data for the mom
 d <- d[apply(select(d, all_of(out)), 1, filtering),] # only has rows where we have both some exposure data and some outcome data (all kids included in analyses)
@@ -46,11 +46,11 @@ characteristics <- function(d, child_char = NULL, child_char_names = NULL, mom_c
              'laz_t2','waz_t2','whz_t2','hcz_t2',
              'laz_t3','waz_t3','whz_t3','hcz_t3','diar7d_t2','diar7d_t3')
   
-  mom <- c('momage', 'momheight', 'momeduy', mom_char, 'cesd_sum_t2', 'cesd_sum_ee_t3', 'pss_sum_mom_t3', 'life_viol_any_t3')
+  mom <- c('momage', 'momheight', 'momeduy', mom_char, 'cesd_sum_t2', 'cesd_sum_ee_t3', 'pss_sum_mom_t3', 'life_viol_any_t3', 'life_phys_viol_t3', 'life_emot_viol_t3', 'life_sex_viol_t3')
   
   n_med_col <- NULL
   for (var in c(child, mom)) {
-    if (var %in% c('sex', 'diar7d_t2', 'diar7d_t3', 'life_viol_any_t3') | is.factor(d[[var]])) {
+    if (var %in% c('sex', 'diar7d_t2', 'diar7d_t3', 'life_viol_any_t3', 'life_phys_viol_t3', 'life_emot_viol_t3', 'life_sex_viol_t3') | is.factor(d[[var]])) {
       if (var == 'sex') {
         n <- sum(d$sex=='female', na.rm=T)
         perc <- round(n/sum(!is.na(d$sex))*100)
@@ -69,13 +69,13 @@ characteristics <- function(d, child_char = NULL, child_char_names = NULL, mom_c
                               "Anthropometry (14 months, Year 1)","","","",
                               "Anthropometry (28 months, Year 2)","","","", "Diarrhea (14 months, Year 1)", "Diarrhea (28 months, Year 2)","",
                               "Anthropometry at enrollment", "Education", rep("", length(mom_char)), "Depression at Year 1", "Depression at Year 2", "Perceived stress at Year 2", 
-                              "Intimate partner violence"),
+                              "Any type of intimate partner violence", "Physical violence", "Emotional violence", "Sexual violence"),
                      "C3" = c("Female", child_char_names,
                               "Length-for-age Z score", "Weight-for-age Z score", "Weight-for-length Z score", "Head circumference-for-age Z score",
                               "Length-for-age Z score", "Weight-for-age Z score", "Weight-for-length Z score", "Head circumference-for-age Z score",
                               "Length-for-age Z score", "Weight-for-age Z score", "Weight-for-length Z score", "Head circumference-for-age Z score",
                               "Caregiver-reported 7-day recall", "Caregiver-reported 7-day recall", "Age (years)", "Height (cm)", "Schooling completed (years)",
-                              mom_char_names, "CES-D score", "CES-D score", "Perceived Stress Scale score", "Any lifetime exposure"),
+                              mom_char_names, "CES-D score", "CES-D score", "Perceived Stress Scale score", "Any lifetime exposure", "Any lifetime exposure", "Any lifetime exposure", "Any lifetime exposure"),
                      "C4" = n_med_col)
   
   tbl1flex <- flextable(tbl1, col_keys=names(tbl1))
@@ -95,7 +95,7 @@ sect_properties <- prop_section(
   page_size = page_size(orient = "portrait", width=8.5, height=11),
   page_margins = page_mar(bottom=.3, top=.3, right=.3, left=.3, gutter = 0)
 )
-save_as_docx("Table 1" = enroll, path="/Users/lgg/Documents/Research\ Group/Code/ipv-dep-stress-telo-new/tables/ipv-telo-enrollment.docx", 
+save_as_docx("Table 1" = enroll, path="/Users/kjung0909/Documents/Research/WASHB/ipv-TL/ipv-dep-stress-telo/tables/ipv-telo-table1.docx", 
              pr_section = sect_properties) 
 
 #table(d$momedu)

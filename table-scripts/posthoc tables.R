@@ -21,7 +21,6 @@ HZadj <- readRDS(here('results/adjusted/HZ_adj_res.RDS'))
 source(here::here("table-functions.R"))
 
 
-
 #### MAIN TABLES ####
 #### Table Z ####
 # type of IPV
@@ -49,3 +48,19 @@ save_as_docx( "Table 5: Association Between Maternal Exposure to Type of IPV and
               pr_section = sect_properties)
 
 #save_as_docx( "Table 5: Association Between Maternal Exposure to Type of IPV and Child Telomere Length" = tblZflexsupp, path='/Users/kjung0909/Documents/Research/WASHB/ipv-TL/ipv-dep-stress-telo/tables/ipv-dep-stress-telo-tables supplementary.docx')
+
+
+#### Count exposure by type of IPV ####
+# Unique mothers
+exp <- c("viol_any_t2", "life_viol_any_t3", "cesd_sum_t2", "life_viol_any_t3","viol_12m_any_t3", "pss_sum_mom_t3", "pss_sum_dad_t3", "cesd_sum_ee_t3") 
+out <- c("TS_t2","TS_t3", "delta_TS") 
+
+filtering <- function(row){
+  any(!is.na(row))
+}
+
+m <- d_clean[apply(select(d_clean, all_of(out)), 1, filtering),]
+
+sum(m$life_phys_viol_t3, na.rm=T)
+sum(m$life_emot_viol_t3, na.rm=T)
+sum(m$life_sex_viol_t3, na.rm=T)
