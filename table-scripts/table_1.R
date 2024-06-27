@@ -15,6 +15,15 @@ out <- c("TS_t2","TS_t3", "delta_TS")
 d <- d[apply(select(d, all_of(exp)), 1, filtering),] # only has rows where we have exposure data for the mom
 d <- d[apply(select(d, all_of(out)), 1, filtering),] # only has rows where we have both some exposure data and some outcome data (all kids included in analyses)
 
+# child age
+median((d$ageday_ht2/30.4167), na.rm = TRUE)
+quantile((d$ageday_ht2/30.4167), 0.25, na.rm = TRUE)
+quantile((d$ageday_ht2/30.4167), 0.75, na.rm = TRUE)
+
+median((d$ageday_ht3/30.4167), na.rm = TRUE)
+quantile((d$ageday_ht3/30.4167), 0.25, na.rm = TRUE)
+quantile((d$ageday_ht3/30.4167), 0.75, na.rm = TRUE)
+
 # OTHER ANALYSES WITH T2 AND T3 EXPOSURES AND OUTCOMES UNCOMMENT AND FILL IN THE CODE BELOW (UNCOMMENT WITH CTRL+SHIFT+C ON PC)
 # exp_t2 <- c("FILL IN WITH ALL EXPOSURES AT YEAR 1/TIMEPOINT 2 I.E. t2_ln_8ip, t2_ln_crp") 
 # out_t2 <- c("FILL IN WITH ALL OUTCOMES I.E. laz_t2, waz_t2") 
@@ -99,3 +108,4 @@ save_as_docx("Table 1" = enroll, path="/Users/kjung0909/Documents/Research/WASHB
              pr_section = sect_properties) 
 
 #table(d$momedu)
+
