@@ -8,6 +8,8 @@ d <- readRDS(paste0(dropboxDir,"Data/Cleaned/Audrie/ipv-dep-stress-telo-covariat
 
 t2t3cor <- cor.test(d$TS_t3_Z, d$TS_t2_Z)
 
+
+
 #correlations for reviewer response:
 # What was the correlation between maternal IPV, depression and parental PSS?
 # Are their correlations consistent with the effect direction with telomere length?
@@ -36,3 +38,16 @@ cor_tab <- bind_rows(
 )
 
 knitr::kable(cor_tab)
+
+#Coefficient of variation
+
+# Calculate the coefficient of variation for TS_t3_Z
+cv_t3 <- sd(d$TS_t3, na.rm = TRUE) / mean(d$TS_t3, na.rm = TRUE)
+
+# Calculate the coefficient of variation for TS_t2_Z
+cv_t2 <- sd(d$TS_t2, na.rm = TRUE) / mean(d$TS_t2, na.rm = TRUE)
+
+# Print the results
+cat("Coefficient of Variation for TS_t3_Z:", cv_t3, "\n")
+cat("Coefficient of Variation for TS_t2_Z:", cv_t2, "\n")
+
